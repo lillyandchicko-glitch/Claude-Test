@@ -212,6 +212,25 @@ window.LILLY = {
   },
 
 
+  // Studio „Dein Hund aufs Shirt“: Spruch-Vorlagen. {name} = Name des Hundes,
+  // without = Text, falls kein Name eingegeben wurde.
+  studio: [
+    { top: "Good Girl. Bad Influence.", sub: "{name}" },
+    { top: "Good Boy. Bad Influence.", sub: "{name}" },
+    { top: "{name} for Kanzlerin", without: "Mein Hund for Kanzlerin", sub: "Programm: Leckerli. Sofa. Fertig." },
+    { top: "{name} for Kanzler", without: "Mein Hund for Kanzler", sub: "Programm: Leckerli. Sofa. Fertig." },
+    { top: "Team {name}", without: "Team Hund", sub: "" },
+    { top: "{name} war's.", without: "Der Hund war's.", sub: "" },
+    { top: "Bester Hund der Welt. Offiziell.", sub: "{name}" },
+    { top: "Mein Therapeut hat vier Pfoten.", sub: "Er heißt {name}." },
+    { top: "Hundehaare sind mein Glitzer.", sub: "" },
+    { top: "Ich trete nicht zurück. Ich leg mich hin.", sub: "{name}, Pressekonferenz beendet" },
+    { top: "Beliebter als jede Regierung", sub: "{name}, parteilos" },
+    { top: "Hass apportier ich nicht.", sub: "{name}" },
+    { top: "I hope we have a little bit Leckerli.", sub: "{name}" },
+    { top: "Zuhause ist, wo {name} auf meinen Socken schläft.", without: "Zuhause ist, wo jemand auf deinen Socken schläft.", sub: "" }
+  ],
+
   // Lilly-Trend: Umfrage-Parodie. base = Startstimmen
   poll: {
     question: "Wenn am Sonntag Gassi-Wahl wäre …",
@@ -237,6 +256,7 @@ window.LILLY = {
 // i = Index in photos oder "cutout" (das liegende Hero-Bild)
 window.LILLY.img = function (i) {
   const L = window.LILLY;
+  if (i && typeof i === "object") return { src: i.src, fallback: i.src, cut: !!i.cut };   // eigenes Foto aus dem Studio
   if (i === "cutout") return { src: "assets/img/cutout.webp", fallback: L.cutout, cut: true };
   i = +i;
   return { src: "assets/img/lilly-" + String(i + 1).padStart(2, "0") + ".webp", fallback: L.photos[i], cut: L.cutouts.includes(i) };

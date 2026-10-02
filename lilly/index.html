@@ -50,7 +50,7 @@
       <a href="#shop" data-magnetic>Shop</a>
       <a href="#umfrage" data-magnetic>Umfrage</a>
       <a href="#automat" data-magnetic>Spruch-Automat</a>
-      <a href="#lilly" data-magnetic>Über Lilly</a>
+      <a href="#studio" data-magnetic>Dein Hund</a>
       <a href="#galerie" data-magnetic>Galerie</a>
     </nav>
     <button class="cart-btn" id="cartOpen" aria-label="Warenkorb öffnen" data-magnetic>
@@ -120,6 +120,84 @@
       <div class="types" id="types" aria-label="Produktart"></div>
       <div class="grid" id="grid" aria-live="polite"></div>
       <div class="more"><button class="btn btn--cream btn--big" id="moreBtn" data-magnetic><span>Mehr Sprüche (<span id="moreCount">12</span>)</span></button></div>
+    </section>
+
+    <!-- Studio: Dein Hund aufs Shirt ------------------------------------ -->
+    <section class="studio" id="studio" aria-labelledby="studioTitle">
+      <div class="studio__head">
+        <p class="eyebrow eyebrow--light">Neu · Dein Hund aufs Shirt</p>
+        <h2 class="section-title section-title--light" id="studioTitle">Dein Hund.<br/>Dein Spruch.</h2>
+        <p class="studio__lede">Foto hochladen, unsere KI stellt deinen Hund automatisch frei. Spruch aussuchen, fertig. <strong>Dein Foto bleibt auf deinem Gerät:</strong> Die KI läuft direkt in deinem Browser.</p>
+        <ol class="studio__steps" id="studioSteps">
+          <li class="is-active">Foto</li>
+          <li>Freistellen</li>
+          <li>Spruch &amp; Produkt</li>
+        </ol>
+      </div>
+
+      <div class="studio__app">
+        <!-- 1: Foto wählen -->
+        <div class="studio__pane" data-pane="upload">
+          <label class="drop" id="drop">
+            <input type="file" accept="image/*" id="upload" class="visually-hidden" />
+            <span class="drop__icon" aria-hidden="true">
+              <svg viewBox="0 0 64 64"><g fill="currentColor"><ellipse cx="32" cy="44" rx="13" ry="11"/><circle cx="15" cy="29" r="6.5"/><circle cx="26" cy="18" r="6.5"/><circle cx="38" cy="18" r="6.5"/><circle cx="49" cy="29" r="6.5"/></g></svg>
+            </span>
+            <strong>Foto deines Hundes hierher ziehen</strong>
+            <span>oder tippen und auswählen · JPG oder PNG</span>
+          </label>
+          <button class="studio__demo" type="button" id="tryDemo">Erst mal mit Toffee ausprobieren →</button>
+        </div>
+
+        <!-- 2: KI arbeitet -->
+        <div class="studio__pane" data-pane="scan" hidden>
+          <div class="scan">
+            <img id="scanImg" alt="" />
+            <i class="scan__line" aria-hidden="true"></i>
+            <div class="scan__paws" aria-hidden="true"><span></span><span></span><span></span></div>
+          </div>
+          <p class="scan__text" id="scanText" role="status">KI wird geladen …</p>
+        </div>
+
+        <!-- 3: Ergebnis + Spruch -->
+        <div class="studio__pane studio__result" data-pane="result" hidden>
+          <div class="studio__preview" id="studioPreview"></div>
+          <div class="studio__controls">
+            <div class="studio__fix">
+              <button type="button" class="studio__orig" id="studioOrig" aria-label="Originalfoto: tippe auf deinen Hund, um Teile hinzuzufügen"><img id="origImg" alt="" /><span>Tippen zum Ergänzen</span></button>
+              <div>
+                <p class="studio__hint" id="studioHint">Nicht ganz richtig? Tipp im Originalfoto auf die fehlende Stelle deines Hundes.</p>
+                <div class="studio__links">
+                  <button type="button" id="useOriginal">Ohne Freistellen verwenden</button>
+                  <button type="button" id="newPhoto">Anderes Foto</button>
+                </div>
+              </div>
+            </div>
+            <label class="studio__field">Name deines Hundes
+              <input id="dogName" maxlength="16" placeholder="z. B. Lilly" autocomplete="off" />
+            </label>
+            <fieldset class="opt">
+              <legend>Spruch</legend>
+              <div class="chips" id="studioSlogans"></div>
+            </fieldset>
+            <label class="studio__field">Oder dein eigener Spruch
+              <input id="ownText" maxlength="60" placeholder="Schreib was Lustiges …" autocomplete="off" />
+            </label>
+            <fieldset class="opt">
+              <legend>Produkt</legend>
+              <div class="chips" id="studioTypes"></div>
+            </fieldset>
+            <fieldset class="opt">
+              <legend>Farbe</legend>
+              <div class="swatches" id="studioColors"></div>
+            </fieldset>
+            <div class="studio__buy">
+              <strong id="studioPrice"></strong>
+              <button class="btn btn--primary btn--grow" type="button" id="studioNext"><span>Weiter zu Größe &amp; Korb</span></button>
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
 
     <!-- Lilly-Trend ------------------------------------------------------ -->

@@ -11,7 +11,8 @@
   const euro = (n) => n.toLocaleString("de-DE", { style: "currency", currency: "EUR" });
   const FREE_SHIP = 60;
   const hasPic = (p) => p !== undefined && p !== null && p !== "";
-  const photoLabel = (p) => p === "cutout" ? "Lilly liegt flach" : "Foto Nr. " + (+p + 1);
+  const photoLabel = (p) => p && typeof p === "object" ? "Dein Hund" : p === "cutout" ? "Lilly liegt flach" : "Foto Nr. " + (+p + 1);
+  const photoKey = (p) => p && typeof p === "object" ? p.id : p;
   const priceOf = (type, photo) => D.types[type].price + (hasPic(photo) ? D.photoSurcharge : 0);
 
   // Bühnenfarbe hinter dem Produkt (Kontrast zur Stofffarbe)
@@ -238,6 +239,7 @@
     sel.size = pickSize(design.type, "M");
     sel.qty = 1;
     sel.photo = hasPic(design.photo) ? design.photo : null;
+    sel.custom = design.photo && typeof design.photo === "object" ? design.photo : null;
     renderPdp(false);
     lenis && lenis.stop();
     pdp.showModal();
@@ -261,6 +263,7 @@
     $("#pdpPrice").textContent = euro(priceOf(sel.type, sel.photo));
     $("#pdpPhotoName").textContent = hasPic(sel.photo) ? `${photoLabel(sel.photo)} (+${euro(D.photoSurcharge)})` : "Nur Spruch";
     $("#pdpPhotos").innerHTML = `<button type="button" class="motif motif--none" data-photo="" aria-pressed="${!hasPic(sel.photo)}" aria-label="Nur Spruch, ohne Foto">Aa</button>` +
+      (sel.custom ? `<button type="button" class="motif${sel.custom.cut ? " motif--cut" : ""}" data-photo="custom" aria-pressed="${sel.photo === sel.custom}" aria-label="Dein Hund"><img src="${sel.custom.src}" alt=""></button>` : "") +
       ["cutout"].concat(D.photos.map((_, i) => i)).map((i) => { const im = D.img(i); return `<button type="button" class="motif${im.cut ? " motif--cut" : ""}" data-photo="${i}" aria-pressed="${String(sel.photo) === String(i)}" aria-label="${photoLabel(i)}"><img src="${im.src}" data-fallback="${im.fallback}" referrerpolicy="no-referrer" onerror="lillyImgFail(this)" alt="" loading="lazy"></button>`; }).join("");
     $("#pdpTypes").innerHTML = Object.entries(D.types).map(([k, v]) =>
       `<button type="button" class="pill pill--small" data-ptype="${k}" aria-pressed="${k === sel.type}">${v.name}</button>`).join("");
@@ -277,7 +280,7 @@
     const c = e.target.closest("[data-color]"); if (c) { sel.color = c.dataset.color; renderPdp(); }
     const s = e.target.closest("[data-size]"); if (s) { sel.size = s.dataset.size; renderPdp(false); }
     const ph = e.target.closest("[data-photo]");
-    if (ph) { const keep = $("#pdpPhotos").scrollLeft; sel.photo = ph.dataset.photo === "" ? null : ph.dataset.photo === "cutout" ? "cutout" : +ph.dataset.photo; renderPdp(); $("#pdpPhotos").scrollLeft = keep; }
+    if (ph) { const keep = $("#pdpPhotos").scrollLeft; sel.photo = ph.dataset.photo === "" ? null : ph.dataset.photo === "custom" ? sel.custom : ph.dataset.photo === "cutout" ? "cutout" : +ph.dataset.photo; renderPdp(); $("#pdpPhotos").scrollLeft = keep; }
   });
   pdp.addEventListener("close", () => lenis && lenis.start());
   $("#qtyMinus").addEventListener("click", () => { sel.qty = Math.max(1, sel.qty - 1); $("#qty").textContent = sel.qty; });
@@ -297,7 +300,7 @@
   const cartEl = $("#cart");
 
   function addToCart(item) {
-    const key = [item.design.id, item.type, item.color, item.size, item.photo].join("|");
+    const key = [item.design.id, item.type, item.color, item.size, photoKey(item.photo)].join("|");
     const found = cart.find((i) => i.key === key);
     if (found) found.qty += item.qty;
     else cart.push({ key, design: item.design, type: item.type, color: item.color, size: item.size, photo: item.photo, qty: item.qty });
@@ -449,6 +452,191 @@
     if (hasGsap) gsap.timeline().to(top, { x: 240, rotate: 20, duration: .35, ease: "power2.in" }).add(send).to(top, { x: 0, rotate: 0, duration: .5, ease: "back.out(1.6)" });
     else send();
   });
+
+  /* ------------------------------------------------------------------
+     Studio: eigenes Hundefoto hochladen → freistellen → Spruch → Korb
+     ------------------------------------------------------------------ */
+  (function studio() {
+    const root = $("#studio");
+    const st = { photo: null, result: null, tpl: 0, type: "shirt", color: "cream", own: "", name: "", tapping: false, taps: 0 };
+    const cutoutURL = new URL("assets/js/cutout.js", document.baseURI).href;
+    let mod = null;
+    const getMod = () => (mod = mod || import(cutoutURL));
+
+    function show(pane) {
+      $$(".studio__pane", root).forEach((p) => { p.hidden = p.dataset.pane !== pane; });
+      const idx = { upload: 0, scan: 1, result: 2 }[pane];
+      $$("#studioSteps li").forEach((li, i) => { li.classList.toggle("is-active", i === idx); li.classList.toggle("is-done", i < idx); });
+    }
+
+    // Modelle vorladen, sobald das Studio in Sichtweite kommt
+    if ("IntersectionObserver" in window) {
+      const io = new IntersectionObserver((es) => { if (es.some((e) => e.isIntersecting)) { getMod().then((m) => m.warmup()).catch(() => {}); io.disconnect(); } }, { rootMargin: "400px" });
+      io.observe(root);
+    }
+
+    const STEPS = { load: "KI wird geladen (einmalig ca. 12 MB) …", find: "Lilly sucht deinen Hund …", cut: "Schere wird gewetzt … schnipp, schnapp …", done: "Fertig!" };
+
+    // Großes PNG für Warenkorb & Speicher verkleinern
+    function shrink(url, max = 640) {
+      return new Promise((res) => {
+        const im = new Image();
+        im.onload = () => {
+          const k = Math.min(1, max / Math.max(im.width, im.height));
+          const c = document.createElement("canvas");
+          c.width = Math.round(im.width * k); c.height = Math.round(im.height * k);
+          c.getContext("2d").drawImage(im, 0, 0, c.width, c.height);
+          res(c.toDataURL("image/png"));
+        };
+        im.onerror = () => res(url);
+        im.src = url;
+      });
+    }
+
+    async function setResult(r, cut) {
+      st.result = r;
+      const src = await shrink(cut ? r.url : r.preview);
+      st.photo = { id: "dein-hund-" + Date.now().toString(36), src, cut };
+      $("#origImg").src = r.preview;
+      const canTap = !!r.tap;
+      $("#studioHint").textContent = !canTap ? "Dein Foto wird rund gedruckt."
+        : cut ? "Nicht ganz richtig? Tipp im Originalfoto auf die fehlende Stelle deines Hundes."
+        : "Wir haben deinen Hund nicht sicher erkannt. Tipp im großen Foto auf ihn, dann stelle ich ihn frei!";
+      $("#studioOrig").classList.toggle("is-pulse", canTap && !cut);
+      $("#studioOrig").disabled = !canTap;
+      show("result");
+      if (canTap && !cut) tapMode(true); else { st.tapping = false; renderStudio(true); }
+    }
+
+    async function handle(file) {
+      if (!file || !/^image\//.test(file.type || "image/")) return toast("Das ist leider kein Bild.");
+      show("scan");
+      const scanImg = $("#scanImg");
+      scanImg.src = URL.createObjectURL(file);
+      $("#scanText").textContent = STEPS.load;
+      try {
+        const m = await getMod();
+        const r = await m.cutout(file, (step) => { $("#scanText").textContent = STEPS[step] || ""; });
+        if (r.url) {
+          await setResult(r, true);
+          const pv = $("#studioPreview").getBoundingClientRect();
+          confetti(pv.left + pv.width / 2, pv.top + pv.height / 3, 70);
+          toast("Freigestellt! So sieht dein Hund als Merch aus.");
+        } else {
+          await setResult(r, false);
+          toast("Tipp im kleinen Foto auf deinen Hund, dann stelle ich ihn frei.");
+        }
+      } catch (err) {
+        console.warn(err);
+        // Fallback: Foto ohne Freistellen benutzen
+        const url = URL.createObjectURL(file);
+        await setResult({ url, preview: await shrink(url, 900), found: false, tap: null }, false);
+        toast("Freistellen klappt in diesem Browser nicht. Wir drucken dein Foto rund.");
+      }
+    }
+
+    $("#upload").addEventListener("change", (e) => handle(e.target.files[0]));
+    const drop = $("#drop");
+    ["dragenter", "dragover"].forEach((ev) => drop.addEventListener(ev, (e) => { e.preventDefault(); drop.classList.add("is-over"); }));
+    ["dragleave", "drop"].forEach((ev) => drop.addEventListener(ev, (e) => { e.preventDefault(); drop.classList.remove("is-over"); }));
+    drop.addEventListener("drop", (e) => handle(e.dataTransfer.files[0]));
+    $("#tryDemo").addEventListener("click", async () => {
+      const im = D.img(9);   // Toffee beim Kuchen
+      const blob = await fetch(im.src).then((r) => r.ok ? r.blob() : fetch(im.fallback).then((x) => x.blob())).catch(() => null);
+      if (blob) handle(new File([blob], "toffee.webp", { type: blob.type || "image/webp" }));
+    });
+    $("#newPhoto").addEventListener("click", () => { $("#upload").value = ""; show("upload"); });
+    $("#useOriginal").addEventListener("click", async () => {
+      if (!st.result) return;
+      const src = await shrink(st.result.preview);
+      st.photo = { id: "dein-hund-" + Date.now().toString(36), src, cut: false };
+      renderStudio(true);
+    });
+    // Antipp-Modus: Originalfoto groß zeigen, Tipp auf den Hund
+    function tapMode(on) {
+      st.tapping = on;
+      st.taps = 0;
+      if (!on) return renderStudio(true);
+      renderStudio(false);   // Bedienelemente aktualisieren, Vorschau bleibt das Originalfoto
+      const pv = $("#studioPreview");
+      pv.style.setProperty("--stage", "#1b0f0a");
+      pv.innerHTML = `<div class="tapper"><img class="tapper__img" src="${st.result.preview}" alt="Dein Originalfoto"><p class="tapper__hint">Tipp auf deinen Hund</p></div>
+        <button type="button" class="tapper__done" data-tapdone>Fertig</button>`;
+      $("#studioOrig").classList.remove("is-pulse");
+    }
+    $("#studioOrig").addEventListener("click", () => { if (st.result && st.result.tap) tapMode(!st.tapping); });
+    $("#studioPreview").addEventListener("click", async (e) => {
+      if (e.target.closest("[data-tapdone]")) return tapMode(false);
+      const img = e.target.closest(".tapper__img");
+      if (!img || !st.tapping) return;
+      const r = img.getBoundingClientRect();
+      const x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height;
+      // Markierung an der Tipp-Stelle
+      const dot = document.createElement("i");
+      dot.className = "tapper__dot";
+      dot.style.left = x * 100 + "%"; dot.style.top = y * 100 + "%";
+      img.parentElement.appendChild(dot);
+      $(".tapper__hint").textContent = "Moment …";
+      await new Promise((res) => setTimeout(res, 40));
+      try {
+        const next = st.result.tap(x, y, st.taps === 0);   // erster Tipp: genau dieser Hund
+        st.taps++;
+        st.result = next;
+        st.photo = { id: "dein-hund-" + Date.now().toString(36), src: await shrink(next.url), cut: true };
+        $("#studioHint").textContent = "Fehlt noch was? Tipp im Foto auf die Stelle. Sonst: Fertig.";
+        $(".tapper__hint").textContent = st.taps === 1 ? "Erwischt! Fehlt was? Nochmal tippen." : "Ergänzt!";
+        // kleine Vorschau des Ergebnisses unten rechts
+        let mini = $(".tapper__mini");
+        if (!mini) { mini = document.createElement("img"); mini.className = "tapper__mini"; mini.alt = "Freigestellt"; img.parentElement.appendChild(mini); }
+        mini.src = st.photo.src;
+      } catch (err) {
+        $(".tapper__hint").textContent = "Da ist kein Hund. Versuch's an einer anderen Stelle.";
+      }
+    });
+
+    // Spruch, Produkt, Farbe
+    const fill = (t) => t.replace(/\{name\}/g, st.name);
+    function texts() {
+      if (st.own.trim()) return { top: st.own.trim(), sub: st.name };
+      const t = D.studio[st.tpl];
+      const top = st.name ? fill(t.top) : (t.without || t.top.replace(/\{name\}/g, "").trim());
+      const sub = st.name ? fill(t.sub || "") : (t.sub || "").includes("{name}") ? "" : t.sub || "";
+      return { top, sub: sub.replace(/^,\s*/, "") };
+    }
+    function renderStudio(animate) {
+      if (!st.photo) return;
+      const t = D.types[st.type];
+      if (!t.colors.includes(st.color)) st.color = t.colors[0];
+      const { top, sub } = texts();
+      const pv = $("#studioPreview");
+      if (!st.tapping) {
+        pv.style.setProperty("--stage", STAGE[st.color]);
+        pv.innerHTML = mockup(st.type, st.color, top, sub, st.photo);
+        if (animate && hasGsap) gsap.from(pv.firstElementChild, { scale: .8, rotate: -4, duration: .7, ease: "back.out(2)" });
+      }
+      $("#studioSlogans").innerHTML = D.studio.map((tpl, i) => {
+        const label = st.name ? fill(tpl.top) : (tpl.without || tpl.top.replace(/\{name\}/g, "…"));
+        return `<button type="button" class="pill pill--small" data-tpl="${i}" aria-pressed="${!st.own.trim() && i === st.tpl}">${label}</button>`;
+      }).join("");
+      $("#studioTypes").innerHTML = Object.entries(D.types).map(([k, v]) =>
+        `<button type="button" class="pill pill--small" data-stype="${k}" aria-pressed="${k === st.type}">${v.name}</button>`).join("");
+      $("#studioColors").innerHTML = t.colors.map((c) =>
+        `<button type="button" class="swatch" data-scolor="${c}" style="--c:${D.colors[c].fabric}" aria-pressed="${c === st.color}" aria-label="${D.colors[c].label}" title="${D.colors[c].label}"></button>`).join("");
+      $("#studioPrice").textContent = euro(priceOf(st.type, st.photo));
+    }
+    root.addEventListener("click", (e) => {
+      const tp = e.target.closest("[data-tpl]"); if (tp) { st.tpl = +tp.dataset.tpl; st.own = ""; $("#ownText").value = ""; renderStudio(true); }
+      const ty = e.target.closest("[data-stype]"); if (ty) { st.type = ty.dataset.stype; renderStudio(true); }
+      const co = e.target.closest("[data-scolor]"); if (co) { st.color = co.dataset.scolor; renderStudio(true); }
+    });
+    let typing;
+    $("#dogName").addEventListener("input", (e) => { st.name = e.target.value.trim(); clearTimeout(typing); typing = setTimeout(() => renderStudio(false), 120); });
+    $("#ownText").addEventListener("input", (e) => { st.own = e.target.value; clearTimeout(typing); typing = setTimeout(() => renderStudio(false), 120); });
+    $("#studioNext").addEventListener("click", () => {
+      const { top, sub } = texts();
+      openPdp({ id: st.photo.id, cat: "eigenes", type: st.type, color: st.color, top, sub, photo: st.photo });
+    });
+  })();
 
   /* ------------------------------------------------------------------
      Lilly-Trend (Umfrage-Parodie)
