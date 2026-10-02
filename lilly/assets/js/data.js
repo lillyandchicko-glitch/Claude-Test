@@ -32,6 +32,19 @@ window.LILLY = {
     "https://i.ibb.co/nqXmCMHK/Generated-Image-May-03-2026-6-48-PM-2.jpg"
   ],
 
+  // photos[0–5] sind freigestellt (transparenter Hintergrund) → ideal für den Druck
+  cutouts: [0, 1, 2, 3, 4, 5],
+  // Bildunterschriften in der Galerie (gleiche Reihenfolge wie photos)
+  captions: [
+    "Pose fürs Wahlplakat", "Zweiter Versuch, gleiche Pose", "Die Kollegin vom Wahlkampfteam",
+    "Pressesprecherin, hört zu", "Hat eine Frage an die Regierung", "Koalitionsverhandlungen, Tag 3",
+    "Bürgersprechstunde", "Infrastrukturprojekt im Stadtpark", "Chefin im Dienst",
+    "Staubsauger-Gipfel ohne Ergebnis", "Lauscht am Koalitionsausschuss", "Doppelspitze",
+    "Umfragetief, freiwillig", "Schlammschlacht im Wahlkampf", "Haben die Schuhe sondiert",
+    "Dienstwagen, Fenster unten", "Offizielles Pressefoto", "Tritt nicht zurück. Liegt.",
+    "Haushaltsdebatte", "Hat Käse gesehen"
+  ],
+
   // Produktarten: Preis in Euro, verfügbare Farben, Größen
   types: {
     shirt:   { name: "T-Shirt",        price: 34.9, sizes: ["XS","S","M","L","XL","XXL"], colors: ["cream","red","mustard","ink","sky"] },
@@ -67,17 +80,17 @@ window.LILLY = {
   // Leitlinie: sarkastisch über Politikbetrieb, Umfragen und Weltlage – nie über einzelne Menschen herziehen.
   designs: [
     // Kanzleramt & Umfragen
-    { id: "kanzlerin",       cat: "kanzleramt", type: "poster",  color: "cream",   top: "Lilly for Kanzlerin", sub: "Programm: Leckerli. Sofa. Fertig.", photo: 8, badge: "Wahlkampf" },
+    { id: "kanzlerin",       cat: "kanzleramt", type: "poster",  color: "cream",   top: "Lilly for Kanzlerin", sub: "Programm: Leckerli. Sofa. Fertig.", photo: 0, badge: "Wahlkampf" },
     { id: "ruecktritt",      cat: "kanzleramt", type: "hoodie",  color: "ink",     top: "Ich trete nicht zurück. Ich leg mich hin.", sub: "Pressekonferenz beendet", badge: "Neu" },
     { id: "beliebter",       cat: "kanzleramt", type: "shirt",   color: "red",     top: "Beliebter als jede Regierung", sub: "Ich sag einfach nichts und wedel.", badge: "Bestseller" },
-    { id: "umfragetief",     cat: "kanzleramt", type: "shirt",   color: "mustard", top: "Umfragetief? Ich lieg freiwillig flach.", sub: "Zustimmung am Napf: 100 %" },
+    { id: "umfragetief",     cat: "kanzleramt", type: "shirt",   color: "mustard", top: "Umfragetief? Ich lieg freiwillig flach.", sub: "Zustimmung am Napf: 100 %", photo: "cutout" },
     { id: "deutschlandtrend",cat: "kanzleramt", type: "tote",    color: "mustard", top: "94 % wollen mich streicheln", sub: "Die anderen 6 % lügen. (Lilly-Trend, Okt. 2026)" },
     { id: "vertrauensfrage", cat: "kanzleramt", type: "cap",     color: "red",     top: "Vertrauensfrage? Ich vertrau jedem mit Wurst.", sub: "" },
-    { id: "koalitionsausschuss", cat: "kanzleramt", type: "mug", color: "cream",   top: "Koalitionsausschuss bis 3 Uhr? Ich: Sofa. Geklärt.", sub: "Ergebnisprotokoll: wurde gefressen" },
+    { id: "koalitionsausschuss", cat: "kanzleramt", type: "mug", color: "cream",   top: "Koalitionsausschuss bis 3 Uhr? Ich: Sofa. Geklärt.", sub: "Ergebnisprotokoll: wurde gefressen", photo: 5 },
     { id: "regierungserklaerung", cat: "kanzleramt", type: "shirt", color: "ink",  top: "Regierungserklärung: Ich hab Hunger.", sub: "Weitere Fragen? Nein." },
     { id: "herbst-reformen", cat: "kanzleramt", type: "hoodie",  color: "mustard", top: "Herbst der Reformen: Körbchen umgestellt", sub: "Reicht für dieses Jahr." },
     { id: "sommerinterview", cat: "kanzleramt", type: "bandana", color: "sky",     top: "Sommerinterview? Ich mach Sommerschlaf.", sub: "" },
-    { id: "wahlplakat",      cat: "kanzleramt", type: "poster",  color: "red",     top: "Ich verspreche nichts. Außer Liebe.", sub: "Die einzige Kandidatin ohne Skandal", photo: 11 },
+    { id: "wahlplakat",      cat: "kanzleramt", type: "poster",  color: "red",     top: "Ich verspreche nichts. Außer Liebe.", sub: "Die Doppelspitze ohne Skandal", photo: 16 },
 
     // Politik
     { id: "gassi-great",     cat: "politik",    type: "shirt",   color: "red",     top: "Make Gassi Great Again", sub: "Lilly 2026 · Leckerli für alle", badge: "Bestseller" },
@@ -95,19 +108,19 @@ window.LILLY = {
     { id: "elster",          cat: "wirtschaft", type: "cap",     color: "cream",   top: "ELSTER? Ich jag nur echte.", sub: "" },
     { id: "sondervermoegen", cat: "wirtschaft", type: "shirt",   color: "cream",   top: "Mein Sondervermögen: 47 Tennisbälle", sub: "Schuldenbremse gilt nicht für Bälle" },
     { id: "bitcoin",         cat: "wirtschaft", type: "cap",     color: "red",     top: "Bitcoin fällt. Mein Ball fällt.", sub: "Ich hol nur einen davon zurück." },
-    { id: "fachkraft",       cat: "wirtschaft", type: "hoodie",  color: "red",     top: "Fachkräftemangel? Ich bin Leckerli-Prüferin", sub: "Staatlich nicht anerkannt" },
+    { id: "fachkraft",       cat: "wirtschaft", type: "hoodie",  color: "red",     top: "Fachkräftemangel? Ich bin Leckerli-Prüferin", sub: "Staatlich nicht anerkannt", photo: 3 },
 
     // Zeitgeist
     { id: "ki-chef",         cat: "zeitgeist",  type: "hoodie",  color: "cream",   top: "KI ersetzt viele Jobs. Meinen nicht.", sub: "Chief Kuschel Officer" },
     { id: "bahn",            cat: "zeitgeist",  type: "mug",     color: "ink",     top: "Pünktlicher als die Bahn", sub: "Außer beim Gassi. Da bleib ich stehen." },
     { id: "deutschlandticket", cat: "zeitgeist", type: "tote",   color: "ink",     top: "Deutschlandticket teurer? Ich fahr Kofferraum.", sub: "" },
     { id: "bildschirmzeit",  cat: "zeitgeist",  type: "shirt",   color: "sky",     top: "Bildschirmzeit: 0. Kuschelzeit: alles.", sub: "" },
-    { id: "influencer",      cat: "zeitgeist",  type: "hoodie",  color: "forest",  top: "Ich bin nicht verwöhnt. Ich bin Influencerin.", sub: "Kooperationen nur gegen Käse", photo: 0 },
+    { id: "influencer",      cat: "zeitgeist",  type: "hoodie",  color: "forest",  top: "Ich bin nicht verwöhnt. Ich bin Influencerin.", sub: "Kooperationen nur gegen Käse", photo: 1 },
     { id: "ki-blase",        cat: "zeitgeist",  type: "bandana", color: "mustard", top: "KI-Blase? Ich jag nur Seifenblasen", sub: "" },
 
     // Hundealltag
     { id: "staubsauger",     cat: "alltag",     type: "shirt",   color: "cream",   top: "Ich hab kein Haarproblem. Du hast ein Staubsaugerproblem.", sub: "", badge: "Bestseller" },
-    { id: "flauschig",       cat: "alltag",     type: "shirt",   color: "red",     top: "Nicht dick. Flauschig budgetiert.", sub: "", photo: 3 },
+    { id: "flauschig",       cat: "alltag",     type: "shirt",   color: "red",     top: "Nicht dick. Flauschig budgetiert.", sub: "", photo: 12 },
     { id: "willkommen",      cat: "alltag",     type: "bandana", color: "red",     top: "Wachhund? Eher Willkommenskomitee", sub: "", badge: "Für Hunde" },
     { id: "work-life",       cat: "alltag",     type: "mug",     color: "cream",   top: "Work-Life-Balance: 22 h schlafen, 2 h Chaos", sub: "" }
   ],
@@ -151,9 +164,10 @@ window.LILLY = {
 };
 
 // Bildquelle: zuerst die lokale WebP-Kopie, bei Fehler das Original bei ImgBB.
-// i = Index in photos oder "cutout"
+// i = Index in photos oder "cutout" (das liegende Hero-Bild)
 window.LILLY.img = function (i) {
   const L = window.LILLY;
-  if (i === "cutout") return { src: "assets/img/cutout.webp", fallback: L.cutout };
-  return { src: "assets/img/lilly-" + String(i + 1).padStart(2, "0") + ".webp", fallback: L.photos[i] };
+  if (i === "cutout") return { src: "assets/img/cutout.webp", fallback: L.cutout, cut: true };
+  i = +i;
+  return { src: "assets/img/lilly-" + String(i + 1).padStart(2, "0") + ".webp", fallback: L.photos[i], cut: L.cutouts.includes(i) };
 };

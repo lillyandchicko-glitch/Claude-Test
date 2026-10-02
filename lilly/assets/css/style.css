@@ -993,3 +993,37 @@ img.is-broken { object-fit: contain !important; }
 .poll__pct { font-family: var(--display); font-size: 1.4rem; }
 .poll__note { margin: 1rem 0 0; font-size: .9rem; font-weight: 500; opacity: .8; }
 @media (max-width: 900px) { .poll { grid-template-columns: 1fr; } .poll__card { rotate: 0deg; } }
+
+/* ---------- Anpassungen an die echten Fotos ---------- */
+/* Freisteller: ohne Rahmen, wie ein echter Siebdruck */
+.print__photo--cut { width: 78%; aspect-ratio: 1; object-fit: contain; background: none; border: 0; filter: drop-shadow(0 .6cqw 0 rgba(0,0,0,.12)); }
+.mock--poster .print__photo--cut { width: 100%; aspect-ratio: 4 / 3.6; }
+.mock--cap .print__photo--cut, .mock--bandana .print__photo--cut { width: 60%; }
+.motif--cut { background: var(--sky); }
+.motif--cut img { object-fit: contain; padding: 3px; }
+
+/* Galerie: Fotos sind Querformat */
+.polaroid { width: clamp(280px, 34vw, 520px); }
+.polaroid img { aspect-ratio: 4 / 3; height: auto; }
+.polaroid--cut img { object-fit: contain; background: var(--sky); padding: 12px; }
+@media (max-width: 760px) { .polaroid { width: 82vw; } }
+
+/* Bilder, die gar nicht laden, ausblenden statt Platzhalter zeigen */
+.polaroid:has(img.is-broken), .motif:has(img.is-broken) { display: none; }
+
+/* Hero: liegende Lilly ist breit */
+.hero__dog { width: min(92vw, 980px); }
+@media (max-width: 760px) { .hero__dog { width: 118vw; bottom: 170px; } }
+@media (max-width: 760px) { .hero__dog { bottom: 250px; } }
+@media (min-width: 761px) {
+  /* Fotos gleiten unter der Überschrift durch statt darüber */
+  .gallery__head {
+    position: relative; z-index: 2;
+    align-self: stretch;
+    display: flex; flex-direction: column; justify-content: center;
+    margin-left: calc(-1 * var(--gutter));
+    padding: 0 28px 0 var(--gutter);
+    background: var(--mustard);
+    box-shadow: 40px 0 40px -12px var(--mustard);
+  }
+}

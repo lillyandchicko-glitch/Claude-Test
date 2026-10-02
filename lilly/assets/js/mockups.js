@@ -104,8 +104,9 @@
     const fs = fit(top, w) * (hasPhoto ? (type === "poster" ? .62 : .72) : 1);
     let pic = PAW;
     if (hasPhoto) {
-      const im = window.LILLY.img(+photo);
-      pic = `<img class="print__photo print__photo--${type === "poster" ? "rect" : "round"}" src="${im.src}" data-fallback="${im.fallback}" referrerpolicy="no-referrer" onerror="lillyImgFail(this)" alt="" decoding="async">`;
+      const im = window.LILLY.img(photo);
+      const shape = im.cut ? "cut" : type === "poster" ? "rect" : "round";
+      pic = `<img class="print__photo print__photo--${shape}" src="${im.src}" data-fallback="${im.fallback}" referrerpolicy="no-referrer" onerror="lillyImgFail(this)" alt="" decoding="async">`;
     }
     return `
       <div class="mock mock--${type}${hasPhoto ? " has-photo" : ""}" style="--print-ink:${c.ink}">

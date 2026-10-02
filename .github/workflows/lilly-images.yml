@@ -32,8 +32,10 @@ jobs:
           while read -r url; do
             if [ "$n" -eq 0 ]; then out="lilly/assets/img/cutout.webp"; size=1400; else out=$(printf "lilly/assets/img/lilly-%02d.webp" "$n"); size=1000; fi
             echo "→ $url  ⇒  $out"
-            curl -fsSL --retry 3 -A "Mozilla/5.0" -o src.bin "$url" || { echo "::warning::Konnte $url nicht laden"; n=$((n+1)); continue; }
-            convert src.bin -auto-orient -resize "${size}x${size}>" png:tmp.png
+            curl -fsSL --retry 2 --max-time 40 -A "Mozilla/5.0" -o src.bin "$url" || { echo "::warning::Konnte $url nicht laden"; n=$((n+1)); continue; }
+            # Freisteller (photos[0–5]) eng beschneiden; das Hero-Bild bleibt wie es ist
+            trim=""; if [ "$n" -ge 1 ] && [ "$n" -le 6 ]; then trim="-trim +repage"; fi
+            convert "src.bin[0]" -auto-orient $trim -resize "${size}x${size}>" png:tmp.png
             cwebp -quiet -q 80 -alpha_q 90 tmp.png -o "$out"
             n=$((n+1))
           done < urls.txt

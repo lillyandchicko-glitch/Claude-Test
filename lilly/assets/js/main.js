@@ -11,6 +11,7 @@
   const euro = (n) => n.toLocaleString("de-DE", { style: "currency", currency: "EUR" });
   const FREE_SHIP = 60;
   const hasPic = (p) => p !== undefined && p !== null && p !== "";
+  const photoLabel = (p) => p === "cutout" ? "Lilly liegt flach" : "Lilly-Foto Nr. " + (+p + 1);
   const priceOf = (type, photo) => D.types[type].price + (hasPic(photo) ? D.photoSurcharge : 0);
 
   // Bühnenfarbe hinter dem Produkt (Kontrast zur Stofffarbe)
@@ -236,9 +237,9 @@
     $("#pdpTitle").textContent = d.top;
     $("#pdpSub").textContent = d.sub || "";
     $("#pdpPrice").textContent = euro(priceOf(sel.type, sel.photo));
-    $("#pdpPhotoName").textContent = hasPic(sel.photo) ? `Lilly-Foto Nr. ${sel.photo + 1} (+${euro(D.photoSurcharge)})` : "Nur Spruch";
+    $("#pdpPhotoName").textContent = hasPic(sel.photo) ? `${photoLabel(sel.photo)} (+${euro(D.photoSurcharge)})` : "Nur Spruch";
     $("#pdpPhotos").innerHTML = `<button type="button" class="motif motif--none" data-photo="" aria-pressed="${!hasPic(sel.photo)}" aria-label="Nur Spruch, ohne Foto">Aa</button>` +
-      D.photos.map((_, i) => { const im = D.img(i); return `<button type="button" class="motif" data-photo="${i}" aria-pressed="${sel.photo === i}" aria-label="Lilly-Foto ${i + 1}"><img src="${im.src}" data-fallback="${im.fallback}" referrerpolicy="no-referrer" onerror="lillyImgFail(this)" alt="" loading="lazy"></button>`; }).join("");
+      ["cutout"].concat(D.photos.map((_, i) => i)).map((i) => { const im = D.img(i); return `<button type="button" class="motif${im.cut ? " motif--cut" : ""}" data-photo="${i}" aria-pressed="${String(sel.photo) === String(i)}" aria-label="${photoLabel(i)}"><img src="${im.src}" data-fallback="${im.fallback}" referrerpolicy="no-referrer" onerror="lillyImgFail(this)" alt="" loading="lazy"></button>`; }).join("");
     $("#pdpTypes").innerHTML = Object.entries(D.types).map(([k, v]) =>
       `<button type="button" class="pill pill--small" data-ptype="${k}" aria-pressed="${k === sel.type}">${v.name}</button>`).join("");
     $("#pdpColors").innerHTML = t.colors.map((c) =>
@@ -254,7 +255,7 @@
     const c = e.target.closest("[data-color]"); if (c) { sel.color = c.dataset.color; renderPdp(); }
     const s = e.target.closest("[data-size]"); if (s) { sel.size = s.dataset.size; renderPdp(false); }
     const ph = e.target.closest("[data-photo]");
-    if (ph) { const keep = $("#pdpPhotos").scrollLeft; sel.photo = ph.dataset.photo === "" ? null : +ph.dataset.photo; renderPdp(); $("#pdpPhotos").scrollLeft = keep; }
+    if (ph) { const keep = $("#pdpPhotos").scrollLeft; sel.photo = ph.dataset.photo === "" ? null : ph.dataset.photo === "cutout" ? "cutout" : +ph.dataset.photo; renderPdp(); $("#pdpPhotos").scrollLeft = keep; }
   });
   pdp.addEventListener("close", () => lenis && lenis.start());
   $("#qtyMinus").addEventListener("click", () => { sel.qty = Math.max(1, sel.qty - 1); $("#qty").textContent = sel.qty; });
@@ -293,7 +294,7 @@
         <div class="cart__thumb" style="--stage:${STAGE[i.color]}">${mockup(i.type, i.color, i.design.top, "", i.photo)}</div>
         <div>
           <h4>${i.design.top}</h4>
-          <p>${D.types[i.type].name} · ${D.colors[i.color].label} · ${i.size}${hasPic(i.photo) ? " · Foto " + (i.photo + 1) : ""}</p>
+          <p>${D.types[i.type].name} · ${D.colors[i.color].label} · ${i.size}${hasPic(i.photo) ? " · " + photoLabel(i.photo) : ""}</p>
           <div class="mini-qty">
             <button data-dec="${idx}" aria-label="Menge verringern">−</button><span>${i.qty}</span><button data-inc="${idx}" aria-label="Menge erhöhen">+</button>
           </div>
@@ -392,12 +393,9 @@
   fillTicker($("#ticker1"), D.ticker);
   fillTicker($("#ticker2"), D.designs.slice(0, 8).map((d) => d.top));
 
-  const captions = ["Chefin im Dienst", "Golden Hour, wer sonst", "Fotoshooting gegen Käse", "Hat den Ball gesehen", "Bin heute Influencerin", "Kein Leckerli, keine Pose",
-    "Offiziell beste Hündin", "Sonntag. Sofa. Sieg.", "Sieht unschuldig aus", "War's nicht", "Modelt nur Hoodies", "Haare überall, Liebe auch",
-    "Termin beim Friseur? Nö.", "Plant den nächsten Drop", "Zoomies in 3…2…1", "Bitte nicht stören", "Schnüffelt die Konkurrenz aus", "Wartet auf Komplimente",
-    "Lächelt für die Kamera", "Wochenende!"];
+  const captions = D.captions;
   $("#galleryTrack").innerHTML = D.photos.map((_, i) => { const im = D.img(i); return `
-    <figure class="polaroid" style="--r:${(i % 2 ? 1 : -1) * (1 + (i * 7) % 4)}deg">
+    <figure class="polaroid${im.cut ? " polaroid--cut" : ""}" style="--r:${(i % 2 ? 1 : -1) * (1 + (i * 7) % 4)}deg">
       <img src="${im.src}" data-fallback="${im.fallback}" referrerpolicy="no-referrer" onerror="lillyImgFail(this)" alt="Lilly: ${captions[i % captions.length]}" decoding="async" width="400" height="500" />
       <figcaption>${captions[i % captions.length]}</figcaption>
       <button class="polaroid__buy" data-photo-buy="${i}">Auf Merch drucken</button>
@@ -407,7 +405,7 @@
     const b = e.target.closest("[data-photo-buy]");
     if (!b) return;
     const i = +b.dataset.photoBuy;
-    openPdp({ id: "foto-" + (i + 1), cat: "foto", type: "shirt", color: "cream", top: "Good Girl. Bad Influence.", sub: captions[i % captions.length], photo: i });
+    openPdp({ id: "foto-" + (i + 1), cat: "foto", type: D.cutouts.includes(i) ? "shirt" : "poster", color: "cream", top: "Good Girl. Bad Influence.", sub: captions[i % captions.length], photo: i });
   });
 
   $("#reviews").innerHTML = D.reviews.map((r) => `
@@ -418,7 +416,7 @@
     </figure>`).join("");
 
   $("#instaLink").href = D.instagram;
-  const instaPics = [8, 11, 0, 13, 5].map((i) => D.img(i));
+  const instaPics = [19, 15, 13, 16, 11].map((i) => D.img(i));
   const stack = $("#instaStack");
   stack.innerHTML = instaPics.map((im, i) => `<img src="${im.src}" data-fallback="${im.fallback}" referrerpolicy="no-referrer" onerror="lillyImgFail(this)" alt="" style="rotate:${(i - 2) * 6}deg;z-index:${i}" />`).join("");
   stack.addEventListener("click", () => {
