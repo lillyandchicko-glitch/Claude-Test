@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Lilly Merch – Good Girl. Bad Influence.</title>
+  <meta name="description" content="Der Merch von Golden Retriever Lilly: T-Shirts, Hoodies, Caps, Tassen und Bandanas mit den witzigsten Sprüchen für Hundemenschen – zu Politik, Wirtschaft und Alltag." />
+  <meta name="theme-color" content="#e8361e" />
+  <meta property="og:title" content="Lilly Merch – Good Girl. Bad Influence." />
+  <meta property="og:description" content="Merch so gut, dass sogar die Katze neidisch wird." />
+  <meta property="og:image" content="https://i.ibb.co/BVXkFTfc/Projekt-Hintergrund-entfernen-9.png" />
+  <link rel="preload" href="assets/fonts/bagel.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="assets/fonts/dmsans-500.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%23e8361e'/%3E%3Cg fill='%23fff1dc'%3E%3Cellipse cx='32' cy='42' rx='12' ry='10'/%3E%3Ccircle cx='17' cy='28' r='6'/%3E%3Ccircle cx='27' cy='19' r='6'/%3E%3Ccircle cx='38' cy='19' r='6'/%3E%3Ccircle cx='47' cy='28' r='6'/%3E%3C/g%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <script>document.documentElement.classList.add("js")</script>
+</head>
+<body>
+  <a class="skip" href="#shop">Zum Shop springen</a>
+
+  <!-- Preloader ---------------------------------------------------------- -->
+  <div class="loader" id="loader" aria-hidden="true">
+    <div class="loader__paws">
+      <span></span><span></span><span></span><span></span><span></span>
+    </div>
+    <p class="loader__text">Lilly schnüffelt noch…</p>
+    <p class="loader__count"><span id="loaderCount">0</span>%</p>
+  </div>
+
+  <div class="cursor" aria-hidden="true"><span class="cursor__label"></span></div>
+  <div class="grain" aria-hidden="true"></div>
+  <div class="progress" aria-hidden="true"></div>
+
+  <!-- Navigation --------------------------------------------------------- -->
+  <header class="nav" id="nav">
+    <a href="#top" class="logo" aria-label="Lilly Merch – nach oben">
+      <span class="logo__word">Lilly</span><span class="logo__reg">®</span>
+    </a>
+    <nav class="nav__links" aria-label="Hauptnavigation">
+      <a href="#shop" data-magnetic>Shop</a>
+      <a href="#automat" data-magnetic>Spruch-Automat</a>
+      <a href="#lilly" data-magnetic>Über Lilly</a>
+      <a href="#galerie" data-magnetic>Galerie</a>
+    </nav>
+    <button class="cart-btn" id="cartOpen" aria-label="Warenkorb öffnen" data-magnetic>
+      <span>Korb</span>
+      <span class="cart-btn__count" id="cartCount">0</span>
+    </button>
+  </header>
+
+  <main id="top">
+    <!-- Hero ------------------------------------------------------------- -->
+    <section class="hero" id="hero">
+      <div class="hero__bg" aria-hidden="true">
+        <span class="hero__sun"></span>
+      </div>
+
+      <h1 class="hero__title" aria-label="Good Girl. Bad Influence.">
+        <span class="line"><span class="word" data-split>Good</span> <span class="word" data-split>Girl.</span></span>
+        <span class="line line--outline"><span class="word" data-split>Bad</span> <span class="word" data-split>Influence.</span></span>
+      </h1>
+
+      <div class="hero__dog" id="heroDog">
+        <img src="https://i.ibb.co/BVXkFTfc/Projekt-Hintergrund-entfernen-9.png" alt="Golden Retriever Lilly, freigestellt" width="900" height="900" fetchpriority="high" />
+      </div>
+
+      <div class="sticker sticker--one" aria-hidden="true">
+        <svg viewBox="0 0 200 200"><defs><path id="circ" d="M100,100 m-72,0 a72,72 0 1,1 144,0 a72,72 0 1,1 -144,0"/></defs>
+          <text><textPath href="#circ">100 % FELLHAFTUNG • 100 % FELLHAFTUNG • </textPath></text></svg>
+        <span>🐾</span>
+      </div>
+      <div class="sticker sticker--two" aria-hidden="true">Drop<br/>N°1</div>
+
+      <div class="hero__foot">
+        <p class="hero__lede">Merch von <strong>Golden Retriever Lilly</strong> – für alle, deren Couch mehr Hundehaare als Kissen hat.</p>
+        <div class="hero__cta">
+          <a class="btn btn--primary" href="#shop" data-magnetic><span>Zum Drop</span></a>
+          <a class="btn btn--ghost" href="#automat" data-magnetic><span>Spruch würfeln</span></a>
+        </div>
+      </div>
+      <div class="scroll-hint" aria-hidden="true"><span>Scroll</span><i></i></div>
+    </section>
+
+    <!-- Laufband --------------------------------------------------------- -->
+    <section class="marquee" aria-label="Sprüche">
+      <div class="marquee__row" data-speed="1"><div class="marquee__track" id="ticker1"></div></div>
+      <div class="marquee__row marquee__row--alt" data-speed="-1"><div class="marquee__track" id="ticker2"></div></div>
+    </section>
+
+    <!-- Intro / Manifest ------------------------------------------------- -->
+    <section class="manifest" id="lilly">
+      <p class="eyebrow">Das Manifest</p>
+      <p class="manifest__text" id="manifestText">Die Welt ist kompliziert. Zölle, Koalitionen, KI-Blasen und eine Bahn, die nie kommt. Lilly hat für all das eine Lösung: hinlegen, wedeln, Leckerli fordern. Unser Merch ist für Menschen, die das verstanden haben.</p>
+      <div class="manifest__stats">
+        <div><strong data-count="47">0</strong><span>Tennisbälle im Sondervermögen</span></div>
+        <div><strong data-count="22">0</strong><span>Stunden Schlaf täglich</span></div>
+        <div><strong data-count="100">0</strong><span>% Fellhaftung garantiert</span></div>
+      </div>
+    </section>
+
+    <!-- Shop --------------------------------------------------------------- -->
+    <section class="shop" id="shop">
+      <div class="shop__head">
+        <h2 class="section-title"><span data-reveal>Der</span> <span data-reveal>Drop</span></h2>
+        <p class="shop__sub">24 Designs. Gedruckt auf Bio-Baumwolle. Getestet von einer Hündin, die alles abschleckt.</p>
+      </div>
+      <div class="filters" role="tablist" aria-label="Kategorien" id="filters"></div>
+      <div class="types" id="types" aria-label="Produktart"></div>
+      <div class="grid" id="grid" aria-live="polite"></div>
+    </section>
+
+    <!-- Spruch-Automat --------------------------------------------------- -->
+    <section class="automat" id="automat">
+      <div class="automat__intro">
+        <p class="eyebrow eyebrow--light">Spruch-Automat</p>
+        <h2 class="section-title section-title--light">Dein eigenes<br/>Unikat</h2>
+        <p>Zieh am Hebel. Lilly kombiniert die Weltlage mit ihrer Lebensweisheit. Gefällt's dir? Ab aufs Shirt.</p>
+      </div>
+      <div class="machine">
+        <div class="machine__window">
+          <div class="reel" data-reel="a"><div class="reel__strip"></div></div>
+          <div class="reel" data-reel="b"><div class="reel__strip"></div></div>
+          <div class="reel" data-reel="c"><div class="reel__strip"></div></div>
+        </div>
+        <div class="machine__controls">
+          <button class="btn btn--mustard" id="spin" data-magnetic><span>Hebel ziehen</span></button>
+          <button class="btn btn--cream" id="slotToShirt" disabled data-magnetic><span>Auf ein Shirt damit</span></button>
+        </div>
+        <button class="lever" id="lever" aria-label="Hebel ziehen"><span></span></button>
+      </div>
+    </section>
+
+    <!-- Galerie (horizontal) -------------------------------------------- -->
+    <section class="gallery" id="galerie">
+      <div class="gallery__pin">
+        <div class="gallery__head">
+          <p class="eyebrow">Galerie</p>
+          <h2 class="section-title">Lilly<br/>im Dienst</h2>
+          <p>Unser Model arbeitet ausschließlich gegen Käse.</p>
+        </div>
+        <div class="gallery__track" id="galleryTrack"></div>
+      </div>
+    </section>
+
+    <!-- Bewertungen ------------------------------------------------------ -->
+    <section class="reviews" aria-labelledby="reviewsTitle">
+      <h2 class="section-title" id="reviewsTitle"><span data-reveal>Das</span> <span data-reveal>Rudel</span> <span data-reveal>sagt</span></h2>
+      <div class="reviews__grid" id="reviews"></div>
+    </section>
+
+    <!-- Instagram CTA ---------------------------------------------------- -->
+    <section class="insta">
+      <div class="insta__stack" id="instaStack" aria-hidden="true"></div>
+      <div class="insta__copy">
+        <p class="eyebrow eyebrow--light">Folg dem Chaos</p>
+        <h2 class="insta__title">@goldenretriever<br/><em>lilly</em></h2>
+        <a class="btn btn--cream btn--big" id="instaLink" href="#" target="_blank" rel="noopener" data-magnetic><span>Auf Instagram folgen</span></a>
+      </div>
+    </section>
+
+    <!-- Newsletter -------------------------------------------------------- -->
+    <section class="news">
+      <h2 class="section-title"><span data-reveal>Bell</span> <span data-reveal>mich</span> <span data-reveal>an</span></h2>
+      <p>Neue Drops zuerst. Kein Spam, nur Knochen.</p>
+      <form class="news__form" id="newsForm">
+        <label class="visually-hidden" for="newsMail">E-Mail-Adresse</label>
+        <input id="newsMail" type="email" required placeholder="deine@mail.de" autocomplete="email" />
+        <button class="btn btn--primary" type="submit"><span>Wuff!</span></button>
+      </form>
+      <p class="news__ok" id="newsOk" hidden>Angemeldet! Lilly hat sich deine Adresse gemerkt (auf einem Zettel, den sie gleich frisst).</p>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer__big" aria-hidden="true">LILLY</div>
+    <div class="footer__row">
+      <p>© 2026 Lilly Merch · Mit 🐾 gemacht</p>
+      <nav aria-label="Rechtliches">
+        <a href="#">Impressum</a>
+        <a href="#">Datenschutz</a>
+        <a href="#">AGB</a>
+        <a href="#">Versand</a>
+      </nav>
+    </div>
+  </footer>
+
+  <!-- Produkt-Dialog ----------------------------------------------------- -->
+  <dialog class="pdp" id="pdp" aria-labelledby="pdpTitle">
+    <button class="pdp__close" data-close aria-label="Schließen">×</button>
+    <div class="pdp__stage" id="pdpStage"></div>
+    <div class="pdp__info">
+      <p class="eyebrow" id="pdpType"></p>
+      <h3 class="pdp__title" id="pdpTitle"></h3>
+      <p class="pdp__sub" id="pdpSub"></p>
+      <p class="pdp__price" id="pdpPrice"></p>
+      <fieldset class="opt">
+        <legend>Produkt</legend>
+        <div class="chips" id="pdpTypes"></div>
+      </fieldset>
+      <fieldset class="opt">
+        <legend>Farbe: <span id="pdpColorName"></span></legend>
+        <div class="swatches" id="pdpColors"></div>
+      </fieldset>
+      <fieldset class="opt">
+        <legend>Größe</legend>
+        <div class="chips" id="pdpSizes"></div>
+      </fieldset>
+      <div class="pdp__buy">
+        <div class="qty">
+          <button type="button" id="qtyMinus" aria-label="Weniger">−</button>
+          <output id="qty">1</output>
+          <button type="button" id="qtyPlus" aria-label="Mehr">+</button>
+        </div>
+        <button class="btn btn--primary btn--grow" id="addToCart"><span>In den Korb</span></button>
+      </div>
+      <ul class="pdp__usp">
+        <li>Bio-Baumwolle, fair produziert</li>
+        <li>Print on Demand – nichts landet im Müll</li>
+        <li>Versand in 3–5 Werktagen</li>
+      </ul>
+    </div>
+  </dialog>
+
+  <!-- Warenkorb ---------------------------------------------------------- -->
+  <aside class="cart" id="cart" aria-label="Warenkorb" aria-hidden="true">
+    <div class="cart__scrim" data-cart-close></div>
+    <div class="cart__panel" role="dialog" aria-modal="true" aria-labelledby="cartTitle">
+      <div class="cart__head">
+        <h3 id="cartTitle">Dein Korb</h3>
+        <button class="cart__close" data-cart-close aria-label="Warenkorb schließen">×</button>
+      </div>
+      <div class="cart__ship">
+        <p id="shipText"></p>
+        <div class="cart__bar"><span id="shipBar"></span></div>
+      </div>
+      <ul class="cart__items" id="cartItems"></ul>
+      <div class="cart__empty" id="cartEmpty">
+        <p>Noch leer. Wie Lillys Napf.</p>
+        <a href="#shop" class="btn btn--primary" data-cart-close><span>Los, shoppen</span></a>
+      </div>
+      <div class="cart__foot" id="cartFoot">
+        <div class="cart__sum"><span>Summe</span><strong id="cartTotal">0,00 €</strong></div>
+        <button class="btn btn--primary btn--grow" id="checkout"><span>Zur Kasse</span></button>
+        <p class="cart__note">Inkl. MwSt. · Versand berechnet an der Kasse</p>
+      </div>
+    </div>
+  </aside>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <canvas class="confetti" id="confetti" aria-hidden="true"></canvas>
+
+  <script src="assets/vendor/gsap.min.js" defer></script>
+  <script src="assets/vendor/ScrollTrigger.min.js" defer></script>
+  <script src="assets/vendor/lenis.min.js" defer></script>
+  <script src="assets/js/data.js" defer></script>
+  <script src="assets/js/mockups.js" defer></script>
+  <script src="assets/js/main.js" defer></script>
+</body>
+</html>
