@@ -119,7 +119,8 @@
   /* ------------------------------------------------------------------
      Shop
      ------------------------------------------------------------------ */
-  const state = { cat: "all", type: "all" };
+  const PAGE = 12;
+  const state = { cat: "all", type: "all", limit: PAGE };
   const grid = $("#grid");
 
   function renderFilters() {
@@ -153,7 +154,11 @@
   }
 
   function renderGrid() {
-    const list = D.designs.filter((d) => (state.cat === "all" || d.cat === state.cat) && (state.type === "all" || d.type === state.type));
+    const all = D.designs.filter((d) => (state.cat === "all" || d.cat === state.cat) && (state.type === "all" || d.type === state.type));
+    const list = all.slice(0, state.limit);
+    const more = $("#moreBtn");
+    more.hidden = all.length <= state.limit;
+    $("#moreCount").textContent = Math.min(PAGE, all.length - state.limit);
     const draw = () => {
       grid.innerHTML = list.length ? list.map(cardHTML).join("") :
         `<p style="font-family:var(--hand);font-size:1.4rem">Hier ist nichts. Lilly hat's wohl verbuddelt. Probier eine andere Kombi!</p>`;
@@ -172,14 +177,31 @@
     const b = e.target.closest("[data-cat]");
     if (!b || b.dataset.cat === state.cat) return;
     state.cat = b.dataset.cat;
+    state.limit = PAGE;
     renderFilters(); renderGrid();
   });
   $("#types").addEventListener("click", (e) => {
     const b = e.target.closest("[data-type]");
     if (!b || b.dataset.type === state.type) return;
     state.type = b.dataset.type;
+    state.limit = PAGE;
     renderFilters(); renderGrid();
   });
+  // Mehr laden: neue Karten hinten anhängen statt alles neu zu zeichnen
+  $("#moreBtn").addEventListener("click", () => {
+    const all = D.designs.filter((d) => (state.cat === "all" || d.cat === state.cat) && (state.type === "all" || d.type === state.type));
+    const next = all.slice(state.limit, state.limit + PAGE);
+    state.limit += PAGE;
+    grid.insertAdjacentHTML("beforeend", next.map(cardHTML).join(""));
+    const added = $$(".card", grid).slice(-next.length);
+    if (hasGsap) {
+      gsap.fromTo(added, { y: 60, opacity: 0 }, { y: 0, opacity: 1, duration: .7, ease: "back.out(1.4)", stagger: .05, clearProps: "transform,opacity" });
+      ScrollTrigger.refresh();
+    }
+    $("#moreBtn").hidden = all.length <= state.limit;
+    $("#moreCount").textContent = Math.min(PAGE, all.length - state.limit);
+  });
+
   grid.addEventListener("click", (e) => {
     const c = e.target.closest(".card");
     if (c) openPdp(D.designs.find((d) => d.id === c.dataset.id), c);
@@ -380,7 +402,8 @@
   $("#slotToShirt").addEventListener("click", () => {
     if (!slotResult) return;
     const [a, b, c] = slotResult;
-    openPdp({ id: "unikat-" + slotResult.join("-").toLowerCase().replace(/[^a-z0-9äöüß]+/g, "-"), cat: "unikat", type: "shirt", color: "cream", top: `${a} ${b} ${c}`, sub: "Unikat aus Lillys Spruch-Automat" });
+    const photo = D.slot.bPhoto[b];
+    openPdp({ id: "unikat-" + slotResult.join("-").toLowerCase().replace(/[^a-z0-9äöüß]+/g, "-"), cat: "unikat", type: "shirt", color: "cream", top: `${a} ${b} ${c}`, sub: "Unikat aus Lillys Spruch-Automat", photo: photo === undefined ? null : photo });
   });
 
   /* ------------------------------------------------------------------
@@ -465,6 +488,102 @@
     const r = e.target.getBoundingClientRect();
     confetti(r.left + r.width / 2, r.top, 60);
   });
+
+  /* ------------------------------------------------------------------
+     Stöckchen-Modus: Ball werfen → Toffee oder Lilly holt ihn
+     ------------------------------------------------------------------ */
+  (function fetchGame() {
+    const btn = $("#fetchBtn");
+    if (reduced) { btn.hidden = true; return; }
+    const layer = document.createElement("div");
+    layer.className = "fetch";
+    layer.setAttribute("aria-hidden", "true");
+    layer.innerHTML = '<div class="fetch__ball"></div><img class="fetch__dog" alt="">';
+    document.body.appendChild(layer);
+    const ball = $(".fetch__ball", layer), dog = $(".fetch__dog", layer);
+    const R = 16;
+    const dogs = [
+      { name: "Toffee", img: D.img(3), lines: ["Toffee hat ihn! Sabbernd, aber stolz.", "Toffee bringt den Ball. Fast bis zu dir.", "Toffee: „Nochmal! Nochmal! Nochmal!“", "Toffee hat den Ball. Und eine Socke. Bonus."] },
+      { name: "Lilly",  img: D.img(0), lines: ["Lilly holt den Ball. Ausnahmsweise.", "Lilly: „Das war das letzte Mal heute.“", "Lilly bringt ihn zurück und legt sich wieder hin.", "Lilly hat den Ball. Verhandlungen über Leckerli laufen."] }
+    ];
+    let busy = false, count = 0;
+
+    function go(x, y) {
+      if (busy) return;
+      busy = true;
+      const who = dogs[count % 2];
+      count++;
+      dog.onerror = () => { dog.onerror = null; dog.src = who.img.fallback; };
+      dog.src = who.img.src;
+      const dogW = Math.min(250, innerWidth * .42);
+      dog.style.width = dogW + "px";
+      const floor = () => innerHeight - R - 10;
+      let bx = x, by = y, vx = (innerWidth / 2 - x) / 45 + (Math.random() - .5) * 8, vy = -(16 + Math.random() * 6);
+      let spin = 0, phase = "fly", t = 0, dx = 0, dir = 1, rest = 0;
+      layer.classList.add("is-on");
+      ball.style.opacity = "1";
+      dog.style.opacity = "0";
+
+      (function frame() {
+        t++;
+        const dogH = dog.offsetHeight || dogW;
+        const dogTop = innerHeight - dogH - 2;
+        if (phase === "fly") {
+          vy += .75; bx += vx; by += vy; spin += vx * 3;
+          if (bx < R) { bx = R; vx = -vx * .8; }
+          if (bx > innerWidth - R) { bx = innerWidth - R; vx = -vx * .8; }
+          if (by > floor()) { by = floor(); vy = Math.abs(vy) < 3 ? 0 : -vy * .6; vx *= .88; }
+          if (vy === 0) rest++;
+          if (rest > 12 || t > 260) {
+            phase = "run";
+            dir = bx < innerWidth / 2 ? -1 : 1;            // vom weiter entfernten Rand quer übers Bild
+            dx = dir === 1 ? -dogW : innerWidth;
+            dog.style.opacity = "1";
+          }
+        } else if (phase === "run" || phase === "carry") {
+          dx += dir * (phase === "carry" ? 1.25 : 1) * (innerWidth > 700 ? 9 : 6);
+          const mouth = dx + dogW / 2;
+          if (phase === "run" && ((dir === 1 && mouth >= bx) || (dir === -1 && mouth <= bx))) {
+            phase = "carry";
+            dir = -dir;
+            toast(who.lines[Math.floor(Math.random() * who.lines.length)]);
+            if (count % 5 === 0) {
+              setTimeout(() => toast(count + " Bälle! Die Doppelspitze verlangt jetzt Leckerli."), 2700);
+              confetti(bx, innerHeight - 120, 80);
+            }
+          }
+          if (phase === "carry") { bx = dx + dogW / 2; by = dogTop + dogH * .32; spin = 0; }
+          const bob = Math.abs(Math.sin(t * .45)) * 16;
+          dog.style.transform = `translate(${dx}px, ${dogTop - bob}px) rotate(${Math.sin(t * .45) * 6}deg) scaleX(${-dir})`;
+          if (phase === "carry" && (dx < -dogW - 40 || dx > innerWidth + 40)) {
+            layer.classList.remove("is-on");
+            ball.style.opacity = "0";
+            dog.style.opacity = "0";
+            busy = false;
+            return;
+          }
+        }
+        ball.style.transform = `translate(${bx - R}px, ${by - R}px) rotate(${spin}deg)`;
+        requestAnimationFrame(frame);
+      })();
+    }
+
+    // Im Hero gibt es einen eigenen Knopf; der schwebende erscheint erst nach dem Hero
+    $$("[data-throw]").forEach((b) => b.addEventListener("click", () => { const r = b.getBoundingClientRect(); go(r.left + r.width / 2, r.top); }));
+    const toggleFab = () => btn.classList.toggle("is-visible", scrollY > innerHeight * .7);
+    addEventListener("scroll", toggleFab, { passive: true });
+    toggleFab();
+
+    btn.addEventListener("click", () => {
+      const r = btn.getBoundingClientRect();
+      btn.classList.remove("is-thrown"); void btn.offsetWidth; btn.classList.add("is-thrown");
+      go(r.left + r.width / 2, r.top);
+    });
+    // Taste „B“ wirft auch (außer beim Tippen in Feldern)
+    addEventListener("keydown", (e) => {
+      if ((e.key === "b" || e.key === "B") && !e.target.closest("input, textarea") && !pdp.open) btn.click();
+    });
+  })();
 
   /* ------------------------------------------------------------------
      Cursor & magnetische Buttons
@@ -586,6 +705,11 @@
         qx.forEach((q) => { q.x(nx * q.k); q.y(ny * q.k); });
       });
     }
+
+    // Hero-Buchstaben wackeln bei Berührung wie Gummi
+    $$(".hero__title .char").forEach((ch) => ch.addEventListener("pointerenter", () => {
+      gsap.fromTo(ch, { scaleY: 1.35, scaleX: .78 }, { scaleY: 1, scaleX: 1, duration: 1, ease: "elastic.out(1.2, .3)", overwrite: "auto" });
+    }));
 
     // Laufband: Grundgeschwindigkeit + Scroll-Velocity
     $$(".marquee__row").forEach((row) => {

@@ -39,7 +39,7 @@ window.LILLY = {
   captions: [
     "Lilly posiert fürs Wahlplakat", "Lilly, zweiter Versuch", "Toffee leitet das Wahlkampfteam",
     "Toffee hört der Regierung zu", "Toffee hat eine Rückfrage", "Koalitionsverhandlungen, Tag 3",
-    "Bürgersprechstunde mit Lilly & Toffee", "Toffees Infrastrukturprojekt im Stadtpark", "Chefin im Dienst",
+    "Bürgersprechstunde mit Lilly & Toffee", "Toffees Infrastrukturprojekt im Stadtpark", "Toffee verhandelt um Kuchen. Lilly schläft.",
     "Toffee protestiert, Lilly sitzt es aus", "Lauschen am Koalitionsausschuss", "Die Doppelspitze",
     "Lilly im Umfragetief, freiwillig", "Toffee: Schlammschlacht. Lilly: bleibt sauber.", "Ressortverteilung: Toffee Socken, Lilly Schuhe",
     "Dienstwagen, Fenster unten", "Offizielles Pressefoto der Doppelspitze", "Lilly tritt nicht zurück. Liegt.",
@@ -71,7 +71,10 @@ window.LILLY = {
   categories: [
     { id: "all",        label: "Alle" },
     { id: "kanzleramt", label: "Kanzleramt & Umfragen" },
+    { id: "zitate",     label: "Berühmte Worte" },
+    { id: "haltung",    label: "Haltung" },
     { id: "doppelspitze", label: "Lilly & Toffee" },
+    { id: "herz",       label: "Herz & Fell" },
     { id: "politik",    label: "Politik" },
     { id: "wirtschaft", label: "Wirtschaft" },
     { id: "zeitgeist",  label: "Zeitgeist" },
@@ -84,7 +87,7 @@ window.LILLY = {
     // Kanzleramt & Umfragen
     { id: "kanzlerin",       cat: "kanzleramt", type: "poster",  color: "cream",   top: "Lilly for Kanzlerin", sub: "Programm: Leckerli. Sofa. Fertig.", photo: 0, badge: "Wahlkampf" },
     { id: "ruecktritt",      cat: "kanzleramt", type: "hoodie",  color: "ink",     top: "Ich trete nicht zurück. Ich leg mich hin.", sub: "Pressekonferenz beendet", badge: "Neu" },
-    { id: "beliebter",       cat: "kanzleramt", type: "shirt",   color: "red",     top: "Beliebter als jede Regierung", sub: "Ich sag einfach nichts und wedel.", badge: "Bestseller" },
+    { id: "beliebter",       cat: "kanzleramt", type: "shirt",   color: "red",     top: "Beliebter als jede Regierung", sub: "Ich sag einfach nichts und wedle.", badge: "Bestseller" },
     { id: "umfragetief",     cat: "kanzleramt", type: "shirt",   color: "mustard", top: "Umfragetief? Ich lieg freiwillig flach.", sub: "Zustimmung am Napf: 100 %", photo: "cutout" },
     { id: "deutschlandtrend",cat: "kanzleramt", type: "tote",    color: "mustard", top: "94 % wollen mich streicheln", sub: "Die anderen 6 % lügen. (Lilly-Trend, Okt. 2026)" },
     { id: "vertrauensfrage", cat: "kanzleramt", type: "cap",     color: "red",     top: "Vertrauensfrage? Ich vertrau jedem mit Wurst.", sub: "" },
@@ -93,6 +96,46 @@ window.LILLY = {
     { id: "herbst-reformen", cat: "kanzleramt", type: "hoodie",  color: "mustard", top: "Herbst der Reformen: Körbchen umgestellt", sub: "Reicht für dieses Jahr." },
     { id: "sommerinterview", cat: "kanzleramt", type: "bandana", color: "sky",     top: "Sommerinterview? Ich mach Sommerschlaf.", sub: "" },
     { id: "wahlplakat",      cat: "kanzleramt", type: "poster",  color: "red",     top: "Ich verspreche nichts. Außer Liebe.", sub: "Die Doppelspitze ohne Skandal", photo: 16 },
+
+    // Berühmte Worte – frei nach bekannten Zitaten, ohne Namen
+    { id: "little-bit",      cat: "zitate", type: "shirt",   color: "red",     top: "I hope we have a little bit Leckerli.", sub: "Frei nach einem großen Fußballphilosophen", badge: "Neu" },
+    { id: "habe-fertig",     cat: "zitate", type: "shirt",   color: "ink",     top: "Ich habe fertig!", sub: "Napf leer.", photo: 12 },
+    { id: "was-erlauben",    cat: "zitate", type: "mug",     color: "red",     top: "Was erlauben Staubsauger?!", sub: "Frei nach einem italienischen Trainer" },
+    { id: "visionen",        cat: "zitate", type: "tote",    color: "cream",   top: "Wer Visionen hat, sollte zum Tierarzt gehen.", sub: "Frei nach einem Hamburger Altkanzler" },
+    { id: "schaffen-das",    cat: "zitate", type: "hoodie",  color: "mustard", top: "Wir schaffen das. Den ganzen Napf.", sub: "", photo: 11 },
+    { id: "neuland",         cat: "zitate", type: "shirt",   color: "sky",     top: "Der Garten ist für uns alle Neuland.", sub: "Frei nach einer Kanzlerin, 2013" },
+    { id: "doppelwumms",     cat: "zitate", type: "cap",     color: "mustard", top: "Doppelwumms: zwei Leckerli auf einmal", sub: "" },
+    { id: "mailand-madrid",  cat: "zitate", type: "shirt",   color: "cream",   top: "Napf oder Schüssel – Hauptsache Futter.", sub: "Frei nach: Mailand oder Madrid" },
+    { id: "sitz-oder-nicht", cat: "zitate", type: "poster",  color: "cream",   top: "Sitz oder nicht Sitz, das ist hier die Frage.", sub: "Hundlet, 3. Akt", photo: 1 },
+    { id: "bettel-also",     cat: "zitate", type: "mug",     color: "cream",   top: "Ich bettle, also bin ich.", sub: "Frei nach einem französischen Denker", photo: 8 },
+    { id: "veni-vidi",       cat: "zitate", type: "shirt",   color: "mustard", top: "Veni, vidi, Wurst.", sub: "" },
+    { id: "gestreichelt",    cat: "zitate", type: "hoodie",  color: "ink",     top: "Gestreichelt, nicht gerührt.", sub: "Agentin 00-Wuff" },
+    { id: "fluffy-one",      cat: "zitate", type: "shirt",   color: "red",     top: "I'm the fluffy one.", sub: "Frei nach einem Trainer mit sehr weißen Zähnen", photo: 0 },
+    { id: "kein-leckerli",   cat: "zitate", type: "tote",    color: "ink",     top: "Ich habe heute leider kein Leckerli für dich.", sub: "Toffee, Jury-Vorsitz", photo: 4 },
+    { id: "unendlich",       cat: "zitate", type: "shirt",   color: "ink",     top: "Zwei Dinge sind unendlich: das Universum und mein Hunger.", sub: "" },
+    { id: "armer-hund",      cat: "zitate", type: "poster",  color: "mustard", top: "Da sitz ich nun, ich armer Hund, und bin so hungrig als wie zuvor.", sub: "Faust, Teil Napf", photo: 3 },
+    { id: "wir-brauchen",    cat: "zitate", type: "hoodie",  color: "red",     top: "Leckerli! Wir brauchen Leckerli!", sub: "Frei nach einem Torwart-Titan" },
+    { id: "schaun-mer-mal",  cat: "zitate", type: "cap",     color: "cream",   top: "Schau'n mer mal, ob's Leckerli gibt.", sub: "" },
+    { id: "ill-be-back",     cat: "zitate", type: "bandana", color: "ink",     top: "I'll be back. Mit Stöckchen.", sub: "" },
+    { id: "kleiner-schritt", cat: "zitate", type: "shirt",   color: "sky",     top: "Ein kleiner Schritt für den Menschen, ein großer Sprung aufs Sofa.", sub: "" },
+
+    // Haltung – zur Brandmauer- und Extremismus-Debatte. Klar in der Sache, ohne Menschen herabzusetzen.
+    { id: "kamingitter",     cat: "haltung", type: "shirt",  color: "ink",     top: "Die einzige Brandmauer, die ich kenne: das Kamingitter.", sub: "Feuerfest. Wie meine Werte.", badge: "Haltung" },
+    { id: "hass-apportier",  cat: "haltung", type: "hoodie", color: "red",     top: "Hass apportier ich nicht.", sub: "Nur Bälle. Und Liebe.", photo: 2 },
+    { id: "pfotenbreit",     cat: "haltung", type: "shirt",  color: "mustard", top: "Kein Pfotenbreit dem Hass.", sub: "Wedeln statt Hetzen" },
+    { id: "rudel-bunt",      cat: "haltung", type: "tote",   color: "cream",   top: "Mein Rudel ist bunt.", sub: "Hell, dunkel, Mischling – alle willkommen.", photo: 5 },
+    { id: "herkunft-egal",   cat: "haltung", type: "bandana", color: "sky",    top: "Ich schnüffle an allen. Herkunft egal.", sub: "" },
+    { id: "wahlprogramm",    cat: "haltung", type: "shirt",  color: "cream",   top: "Ich mag alle Menschen. Das ist mein ganzes Wahlprogramm.", sub: "Golden Retriever, parteilos", photo: 0 },
+    { id: "sofaverbot",      cat: "haltung", type: "mug",    color: "ink",     top: "Verbotsverfahren? Ich kenn nur Sofaverbot.", sub: "Ich halt mich trotzdem nicht dran." },
+
+    // Herz & Fell – die schönen Sachen
+    { id: "therapeut",       cat: "herz", type: "shirt",   color: "cream",   top: "Mein Therapeut hat vier Pfoten.", sub: "Und nimmt nur Leckerli.", photo: 16, badge: "Neu" },
+    { id: "nasser-hund",     cat: "herz", type: "mug",     color: "cream",   top: "Glück riecht nach nassem Hund.", sub: "", photo: 13 },
+    { id: "socken",          cat: "herz", type: "hoodie",  color: "cream",   top: "Zuhause ist, wo jemand auf deinen Socken schläft.", sub: "", photo: 14 },
+    { id: "kalte-schnauze",  cat: "herz", type: "shirt",   color: "sky",     top: "Der beste Tag beginnt mit einer kalten Schnauze.", sub: "" },
+    { id: "glitzer",         cat: "herz", type: "shirt",   color: "ink",     top: "Hundehaare sind mein Glitzer.", sub: "", badge: "Bestseller" },
+    { id: "trotzdem-toll",   cat: "herz", type: "tote",    color: "mustard", top: "Ich bin nicht perfekt. Mein Hund findet mich trotzdem toll.", sub: "" },
+    { id: "glueck-kaufen",   cat: "herz", type: "poster",  color: "sky",     top: "Geld kauft kein Glück. Aber Leckerli. Fast dasselbe.", sub: "", photo: 19 },
 
     // Lilly & Toffee
     { id: "doppelspitze",    cat: "doppelspitze", type: "shirt", color: "cream",   top: "Doppelspitze: Lilly regiert, Toffee randaliert.", sub: "Koalitionsvertrag liegt im Körbchen", photo: 5, badge: "Neu" },
@@ -111,7 +154,7 @@ window.LILLY = {
     { id: "eichhoernchen",   cat: "politik",    type: "cap",     color: "ink",     top: "Schuldenbremse? Ich bremse nur für Eichhörnchen", sub: "", badge: "Limitiert" },
     { id: "buerokratie",     cat: "politik",    type: "tote",    color: "cream",   top: "Bürokratieabbau: Ich hab den Antrag gefressen", sub: "Formular 27b/6 – war lecker" },
     { id: "rente",           cat: "politik",    type: "shirt",   color: "sky",     top: "In Hundejahren 70. Arbeite noch Vollzeit.", sub: "Rentenkommission, ruft mich an." },
-    { id: "waermepumpe",     cat: "politik",    type: "shirt",   color: "mustard", top: "Ich bin die Wärmepumpe", sub: "Heizungsgesetz-konform seit Welpe" },
+    { id: "waermepumpe",     cat: "politik",    type: "shirt",   color: "mustard", top: "Ich bin die Wärmepumpe", sub: "Heizungsgesetz-konform seit dem Welpenalter" },
     { id: "grundsicherung",  cat: "politik",    type: "shirt",   color: "cream",   top: "Meine Grundsicherung: ein voller Napf", sub: "Nicht verhandelbar." },
 
     // Wirtschaft
@@ -143,18 +186,31 @@ window.LILLY = {
     "Good Girl. Bad Influence.",
     "Umfragewerte: 100 % Wedeln",
     "Kein Rücktritt, nur Hinlegen",
-    "Haare sind das neue Glitzer",
+    "Hundehaare sind mein Glitzer",
     "Sitz. Platz. Shoppen.",
     "Koalition mit dem Sofa steht",
-    "Wedeln ist mein Cardio"
+    "Wedeln ist mein Cardio",
+    "Hass apportier ich nicht",
+    "I hope we have a little bit Leckerli",
+    "Toffee war's"
   ],
 
   // Spruch-Automat: Anfang + Mitte + Ende
   slot: {
-    a: ["Umfragetief?", "Koalitionskrach?", "Herbst der Reformen?", "Rentenstreit?", "Zölle steigen?", "Wachstum bei 0,0 %?", "KI übernimmt?", "Bahn verspätet?", "Sondersitzung?", "Montag?"],
-    b: ["Ich", "Lilly", "Toffee", "Die Kanzlerin der Herzen", "Die Doppelspitze", "Mein Hund"],
-    c: ["bleibt flauschig.", "will nur Käse.", "wedelt trotzdem.", "legt sich einfach hin.", "liegt im Umfragehoch.", "fordert Leckerli-Grundeinkommen.", "jagt Eichhörnchen.", "macht Zoomies.", "vertagt alles auf nach dem Nickerchen."]
+    a: ["Montagmorgen?", "Regen beim Gassi?", "Der Postbote klingelt?", "Staubsauger an?", "Tierarzttermin?", "Börsencrash?",
+        "Diät ab morgen?", "Umfragetief?", "Koalitionskrach?", "KI übernimmt die Welt?", "Silvester?", "Die Katze guckt komisch?",
+        "Käse fällt runter?", "WLAN weg?", "Schwiegermutter kommt?", "Bahnstreik?", "Hitzewelle?", "Steuererklärung fällig?",
+        "Herbst der Reformen?", "Zölle steigen?", "Badewanne läuft ein?", "Jemand sagt „Leckerli“?"],
+    // Wer im Spruch vorkommt, landet als Foto mit aufs Shirt (Index in photos)
+    bPhoto: { "Lilly": 0, "Toffee": 3, "Die Doppelspitze": 5, "Die Kanzlerin der Herzen": 1, "Ein echter Golden": 1, "Das Fellmonster": "cutout", "Die Chefin": 0 },
+    b: ["Lilly", "Toffee", "Die Doppelspitze", "Die Kanzlerin der Herzen", "Ein echter Golden", "Das Fellmonster", "Die Chefin", "Mein Hund"],
+    c: ["bleibt flauschig.", "will nur Käse.", "wedelt trotzdem.", "legt sich einfach hin.", "liegt im Umfragehoch.",
+        "fordert Leckerli-Grundeinkommen.", "jagt Eichhörnchen.", "macht Zoomies.", "vertagt alles aufs Nickerchen.",
+        "beruft eine Pressekonferenz ein.", "wälzt sich im Matsch.", "frisst die Beweise.", "guckt treu und sagt nichts.",
+        "kündigt dem Staubsauger.", "haart demonstrativ.", "tritt nicht zurück, sondern legt sich hin.", "bellt die Wolken an.",
+        "versteckt sich hinter dem Sofa.", "klaut eine Socke.", "sabbert vor Glück.", "hat alles im Griff. Fast."]
   },
+
 
   // Lilly-Trend: Umfrage-Parodie. base = Startstimmen
   poll: {
@@ -171,7 +227,7 @@ window.LILLY = {
 
   reviews: [
     { name: "Jana & Bruno", dog: "Labrador", text: "Mein Nachbar hat beim Gassi so gelacht, dass er seinen eigenen Hund vergessen hat.", stars: 5 },
-    { name: "Mehmet & Luna", dog: "Golden Retriever", text: "Seit ich das Rücktritt-Hoodie trage, legen sich im Büro alle hin. Produktivität: egal. Stimmung: top.", stars: 5 },
+    { name: "Mehmet & Luna", dog: "Golden Retriever", text: "Seit ich den Rücktritts-Hoodie trage, legen sich im Büro alle hin. Produktivität: egal. Stimmung: top.", stars: 5 },
     { name: "Sabine & Paul", dog: "Dackel", text: "Das Wahlplakat hängt im Flur. Mein Mann hat schon zweimal unterschrieben.", stars: 5 },
     { name: "Tom & Kiwi", dog: "Mischling", text: "Kiwi trägt jetzt das „Toffee war's“-Bandana. Seitdem war Kiwi nie mehr schuld. Genial.", stars: 5 }
   ]

@@ -87,6 +87,7 @@
         <div class="hero__cta">
           <a class="btn btn--primary" href="#shop" data-magnetic><span>Zum Drop</span></a>
           <a class="btn btn--ghost" href="#automat" data-magnetic><span>Spruch würfeln</span></a>
+          <button class="btn btn--mustard btn--throw" type="button" data-throw data-magnetic><span class="fetch-btn__ball" aria-hidden="true"></span><span>Ball werfen</span></button>
         </div>
       </div>
       <div class="scroll-hint" aria-hidden="true"><span>Scroll</span><i></i></div>
@@ -118,6 +119,7 @@
       <div class="filters" role="tablist" aria-label="Kategorien" id="filters"></div>
       <div class="types" id="types" aria-label="Produktart"></div>
       <div class="grid" id="grid" aria-live="polite"></div>
+      <div class="more"><button class="btn btn--cream btn--big" id="moreBtn" data-magnetic><span>Mehr Sprüche (<span id="moreCount">12</span>)</span></button></div>
     </section>
 
     <!-- Lilly-Trend ------------------------------------------------------ -->
@@ -138,7 +140,7 @@
       <div class="automat__intro">
         <p class="eyebrow eyebrow--light">Spruch-Automat</p>
         <h2 class="section-title section-title--light">Dein eigenes<br/>Unikat</h2>
-        <p>Zieh am Hebel. Lilly kombiniert die Weltlage mit ihrer Lebensweisheit. Gefällt's dir? Ab aufs Shirt.</p>
+        <p>Zieh am Hebel. Über 3.000 Kombinationen aus Weltlage, Alltag und Hundeweisheit. Gefällt dir der Spruch? Ab aufs Shirt, mit dem passenden Hund.</p>
       </div>
       <div class="machine">
         <div class="machine__window">
@@ -176,7 +178,7 @@
     <section class="insta">
       <div class="insta__stack" id="instaStack" aria-hidden="true"></div>
       <div class="insta__copy">
-        <p class="eyebrow eyebrow--light">Folg dem Chaos</p>
+        <p class="eyebrow eyebrow--light">Folge dem Chaos</p>
         <h2 class="insta__title">@goldenretriever<br/><em>lilly</em></h2>
         <a class="btn btn--cream btn--big" id="instaLink" href="#" target="_blank" rel="noopener" data-magnetic><span>Auf Instagram folgen</span></a>
       </div>
@@ -273,6 +275,11 @@
       </div>
     </div>
   </aside>
+
+  <button class="fetch-btn" id="fetchBtn" aria-label="Ball werfen – Lilly oder Toffee holt ihn (Taste B)">
+    <span class="fetch-btn__ball" aria-hidden="true"></span>
+    <span class="fetch-btn__label">Ball werfen!</span>
+  </button>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
   <canvas class="confetti" id="confetti" aria-hidden="true"></canvas>

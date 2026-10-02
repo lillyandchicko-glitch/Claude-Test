@@ -17,10 +17,10 @@ python3 -m http.server 8000
 | Bereich | Effekt |
 | --- | --- |
 | Preloader | Laufende Pfotenabdrücke + Prozentzähler, Vorhang fährt hoch |
-| Hero | Buchstaben springen einzeln ein, Lilly ploppt elastisch hoch, drehende Sonnenstrahlen, Maus-Parallax, rotierender Sticker |
+| Hero | Buchstaben springen einzeln ein und wackeln bei Berührung wie Gummi, Lilly ploppt elastisch hoch, drehende Sonnenstrahlen, Maus-Parallax, rotierender Sticker |
 | Laufband | Zwei schräge Bänder, Tempo und Neigung reagieren auf die Scroll-Geschwindigkeit |
 | Manifest | Text leuchtet Wort für Wort beim Scrollen auf, Zähler laufen hoch |
-| Shop | 24 Designs, Filter nach Thema und Produktart, 3D-Tilt + Lichtspot auf Karten, Mockups werden live als SVG erzeugt |
+| Shop | 78 Designs in 10 Kategorien (u. a. Berühmte Worte, Haltung, Herz & Fell), Filter, „Mehr Sprüche“ lädt je 12 nach, 3D-Tilt + Lichtspot auf Karten, Mockups werden live als SVG erzeugt |
 | Produktdetail | Produkt, Farbe, Größe wechseln → Mockup wird sofort neu gedruckt |
 | Warenkorb | Seitenpanel, Mengen, Gratis-Versand-Balken, Konfetti aus Pfoten, Knochen und Herzen; wird im Browser gespeichert |
 | Lilly-Trend | Umfrage-Parodie „Sonntagsfrage“: abstimmen, Balken wachsen, Konfetti |
@@ -28,6 +28,7 @@ python3 -m http.server 8000
 | Spruch-Automat | Slot-Maschine kombiniert Weltlage + Lilly-Weisheit; Ergebnis direkt als Unikat bestellbar |
 | Galerie | Horizontal scrollende Polaroids (Desktop gepinnt, Handy wischbar) |
 | Instagram | Fotostapel zum Durchklicken |
+| Stöckchen-Modus | „Ball werfen“ (Knopf oder Taste B): Der Ball fliegt mit Physik übers Bild, Toffee oder Lilly rennt quer durch und holt ihn |
 | Extras | Eigener Cursor mit Label, magnetische Buttons, Fortschrittsbalken, Navigation blendet beim Runterscrollen aus |
 
 `prefers-reduced-motion` wird respektiert, Dialoge sind native `<dialog>`-Elemente, alles ist per Tastatur bedienbar. Ohne JavaScript bleibt der Inhalt sichtbar.
