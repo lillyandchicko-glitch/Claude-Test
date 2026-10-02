@@ -63,6 +63,22 @@
     }
   };
 
+  // Wahlplakat (eigene Form, gleiche Druck-Logik)
+  SHAPES.poster = {
+    print: [21, 12, 58, 76],
+    draw: (f, s, g) => `
+      <rect x="58" y="18" width="284" height="404" rx="6" fill="${f}"/>
+      <rect x="58" y="18" width="284" height="404" rx="6" fill="url(#${g})"/>
+      <rect x="72" y="32" width="256" height="376" rx="3" fill="none" stroke="${s}" stroke-width="2" opacity=".5"/>
+      <rect x="150" y="6" width="100" height="26" rx="3" fill="#fff8e8" opacity=".85" transform="rotate(-4 200 19)"/>`
+  };
+
+  // Druckfläche, wenn ein Foto mitgedruckt wird (größer als nur Text)
+  const PHOTO_PRINT = {
+    shirt: [27, 20, 46, 58], hoodie: [28, 33, 44, 36], poster: [21, 10, 58, 80],
+    cap: [33, 34, 34, 26], tote: [24, 38, 52, 52], mug: [25, 33, 44, 54], bandana: [31, 29, 38, 32]
+  };
+
   const PAW = `<svg class="print__paw" viewBox="0 0 64 64" aria-hidden="true"><g fill="currentColor"><ellipse cx="32" cy="44" rx="13" ry="11"/><circle cx="15" cy="29" r="6.5"/><circle cx="26" cy="18" r="6.5"/><circle cx="38" cy="18" r="6.5"/><circle cx="49" cy="29" r="6.5"/></g></svg>`;
 
   function esc(t) {
@@ -77,16 +93,22 @@
     return Math.min(9.5, (width * 1.6) / longest, Math.max(2.4, (width * 2.1) / Math.pow(len, 0.78)));
   }
 
-  window.mockup = function (type, colorKey, top, sub) {
+  window.mockup = function (type, colorKey, top, sub, photo) {
     const shape = SHAPES[type] || SHAPES.shirt;
     const c = window.LILLY.colors[colorKey] || window.LILLY.colors.cream;
     const g = "sh" + ++uid;
     const shadeDark = colorKey === "ink" || colorKey === "forest";
     const stroke = shadeDark ? "rgba(255,255,255,.35)" : "rgba(27,15,10,.55)";
-    const [l, t, w, h] = shape.print;
-    const fs = fit(top, w);
+    const hasPhoto = photo !== undefined && photo !== null && photo !== "";
+    const [l, t, w, h] = hasPhoto ? PHOTO_PRINT[type] || shape.print : shape.print;
+    const fs = fit(top, w) * (hasPhoto ? (type === "poster" ? .62 : .72) : 1);
+    let pic = PAW;
+    if (hasPhoto) {
+      const im = window.LILLY.img(+photo);
+      pic = `<img class="print__photo print__photo--${type === "poster" ? "rect" : "round"}" src="${im.src}" data-fallback="${im.fallback}" referrerpolicy="no-referrer" onerror="lillyImgFail(this)" alt="" decoding="async">`;
+    }
     return `
-      <div class="mock mock--${type}" style="--print-ink:${c.ink}">
+      <div class="mock mock--${type}${hasPhoto ? " has-photo" : ""}" style="--print-ink:${c.ink}">
         <svg class="mock__svg" viewBox="0 0 400 440" aria-hidden="true">
           <defs>
             <linearGradient id="${g}" x1="0" y1="0" x2="1" y2="1">
@@ -98,8 +120,8 @@
           ${shape.draw(c.fabric, stroke, g)}
         </svg>
         <div class="print" style="left:${l}%;top:${t}%;width:${w}%;height:${h}%">
-          ${PAW}
-          <p class="print__top" style="font-size:${fs}cqw">${esc(top)}</p>
+          ${pic}
+          <p class="print__top" style="font-size:${fs.toFixed(2)}cqw">${esc(top)}</p>
           ${sub ? `<p class="print__sub">${esc(sub)}</p>` : ""}
         </div>
       </div>`;

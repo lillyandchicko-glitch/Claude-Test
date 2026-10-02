@@ -23,6 +23,8 @@ python3 -m http.server 8000
 | Shop | 24 Designs, Filter nach Thema und Produktart, 3D-Tilt + Lichtspot auf Karten, Mockups werden live als SVG erzeugt |
 | Produktdetail | Produkt, Farbe, Größe wechseln → Mockup wird sofort neu gedruckt |
 | Warenkorb | Seitenpanel, Mengen, Gratis-Versand-Balken, Konfetti aus Pfoten, Knochen und Herzen; wird im Browser gespeichert |
+| Lilly-Trend | Umfrage-Parodie „Sonntagsfrage“: abstimmen, Balken wachsen, Konfetti |
+| Foto-Merch | Jedes Design wahlweise mit einem von 20 Lilly-Fotos (+5 €), neues Produkt „Wahlplakat“, Fotos auch direkt aus der Galerie bestellbar |
 | Spruch-Automat | Slot-Maschine kombiniert Weltlage + Lilly-Weisheit; Ergebnis direkt als Unikat bestellbar |
 | Galerie | Horizontal scrollende Polaroids (Desktop gepinnt, Handy wischbar) |
 | Instagram | Fotostapel zum Durchklicken |
@@ -38,7 +40,8 @@ Alle Inhalte stehen in `assets/js/data.js`:
 - `designs` – Sprüche, Kategorie, Standard-Produkt und -Farbe, optionales Badge
 - `types` – Preise, Größen, verfügbare Farben je Produktart
 - `slot` – Wortlisten für den Spruch-Automaten
-- `photos` / `cutout` – Bilder (aktuell bei ImgBB gehostet; für den Livebetrieb besser in `assets/img/` ablegen)
+- `poll` – Frage und Antworten der Umfrage-Parodie
+- `photos` / `cutout` – Bilder. Die GitHub Action `.github/workflows/lilly-images.yml` lädt sie bei jeder Änderung an `data.js` von ImgBB herunter, verkleinert sie als WebP und legt sie in `assets/img/` ab. Die Seite nutzt zuerst diese Kopien und fällt sonst auf ImgBB zurück. Neue Fotos also einfach hinten an `photos` anhängen.
 
 ## Noch offen für den echten Verkauf
 

@@ -5,7 +5,9 @@ window.LILLY = {
   instagram: "https://www.instagram.com/goldenretriever_lilly/",
   handle: "@goldenretriever lilly",
 
-  // Bilder (Gemini-generiert, gehostet auf ImgBB)
+  // Bilder (Gemini-generiert). Original bei ImgBB; die GitHub Action
+  // .github/workflows/lilly-images.yml legt verkleinerte Kopien in assets/img/ ab.
+  // Reihenfolge nicht ändern: cutout → cutout.webp, photos[0] → lilly-01.webp usw.
   cutout: "https://i.ibb.co/BVXkFTfc/Projekt-Hintergrund-entfernen-9.png",
   photos: [
     "https://i.ibb.co/xSy4rWXh/Gemini-Generated-Image-2vktt62vktt62vkt-2-2.png",
@@ -32,82 +34,126 @@ window.LILLY = {
 
   // Produktarten: Preis in Euro, verfügbare Farben, Größen
   types: {
-    shirt:   { name: "T-Shirt",       price: 34.9, sizes: ["XS","S","M","L","XL","XXL"], colors: ["cream","red","mustard","ink","sky"] },
-    hoodie:  { name: "Hoodie",        price: 64.9, sizes: ["S","M","L","XL","XXL"],      colors: ["ink","mustard","red","cream","forest"] },
-    cap:     { name: "Dad Cap",       price: 29.9, sizes: ["One Size"],                  colors: ["red","ink","cream","forest"] },
-    tote:    { name: "Gassi-Beutel",  price: 24.9, sizes: ["One Size"],                  colors: ["cream","ink","mustard"] },
-    mug:     { name: "Tasse",         price: 19.9, sizes: ["330 ml"],                    colors: ["cream","ink","red"] },
-    bandana: { name: "Hunde-Bandana", price: 17.9, sizes: ["S","M","L"],                 colors: ["red","mustard","sky","ink"] }
+    shirt:   { name: "T-Shirt",        price: 34.9, sizes: ["XS","S","M","L","XL","XXL"], colors: ["cream","red","mustard","ink","sky"] },
+    hoodie:  { name: "Hoodie",         price: 64.9, sizes: ["S","M","L","XL","XXL"],      colors: ["ink","mustard","red","cream","forest"] },
+    poster:  { name: "Wahlplakat",     price: 29.9, sizes: ["A3","A2","A1"],              colors: ["cream","red","mustard","sky"] },
+    cap:     { name: "Dad Cap",        price: 29.9, sizes: ["One Size"],                  colors: ["red","ink","cream","forest"] },
+    tote:    { name: "Gassi-Beutel",   price: 24.9, sizes: ["One Size"],                  colors: ["cream","ink","mustard"] },
+    mug:     { name: "Tasse",          price: 19.9, sizes: ["330 ml"],                    colors: ["cream","ink","red"] },
+    bandana: { name: "Hunde-Bandana",  price: 17.9, sizes: ["S","M","L"],                 colors: ["red","mustard","sky","ink"] }
   },
+  photoSurcharge: 5, // Aufpreis für Foto-Druck
 
-  // Stofffarbe → [Stoff, Druckfarbe]
+  // Stofffarbe → Stoff + Druckfarbe
   colors: {
-    cream:   { label: "Creme",       fabric: "#fff1dc", ink: "#e8361e" },
-    red:     { label: "Ketchup",     fabric: "#e8361e", ink: "#fff1dc" },
-    mustard: { label: "Senf",        fabric: "#ffb81c", ink: "#1b0f0a" },
-    ink:     { label: "Nachtschwarz",fabric: "#1b0f0a", ink: "#ffb81c" },
-    sky:     { label: "Himmelblau",  fabric: "#9fd3ff", ink: "#1b0f0a" },
-    forest:  { label: "Waldgrün",    fabric: "#1f4d3a", ink: "#fff1dc" }
+    cream:   { label: "Creme",        fabric: "#fff1dc", ink: "#e8361e" },
+    red:     { label: "Ketchup",      fabric: "#e8361e", ink: "#fff1dc" },
+    mustard: { label: "Senf",         fabric: "#ffb81c", ink: "#1b0f0a" },
+    ink:     { label: "Nachtschwarz", fabric: "#1b0f0a", ink: "#ffb81c" },
+    sky:     { label: "Himmelblau",   fabric: "#9fd3ff", ink: "#1b0f0a" },
+    forest:  { label: "Waldgrün",     fabric: "#1f4d3a", ink: "#fff1dc" }
   },
 
   categories: [
-    { id: "all",      label: "Alle" },
-    { id: "politik",  label: "Politik" },
+    { id: "all",        label: "Alle" },
+    { id: "kanzleramt", label: "Kanzleramt & Umfragen" },
+    { id: "politik",    label: "Politik" },
     { id: "wirtschaft", label: "Wirtschaft" },
-    { id: "zeitgeist",label: "Zeitgeist" },
-    { id: "alltag",   label: "Hundealltag" }
+    { id: "zeitgeist",  label: "Zeitgeist" },
+    { id: "alltag",     label: "Hundealltag" }
   ],
 
-  // Die Kollektion. top = Hauptzeile (groß), sub = Kleingedrucktes.
+  // Die Kollektion. top = Hauptzeile, sub = Kleingedrucktes, photo = Index in photos (optional)
+  // Leitlinie: sarkastisch über Politikbetrieb, Umfragen und Weltlage – nie über einzelne Menschen herziehen.
   designs: [
-    { id: "gassi-great",   cat: "politik",    type: "shirt",   color: "red",     top: "Make Gassi Great Again", sub: "Lilly 2026 · Leckerli für alle", badge: "Bestseller" },
-    { id: "zoelle",        cat: "wirtschaft", type: "hoodie",  color: "ink",     top: "Ich verhandle nur in Leckerli", sub: "Zölle? Akzeptiere ich nicht.", badge: "Neu" },
-    { id: "waermepumpe",   cat: "politik",    type: "shirt",   color: "mustard", top: "Ich bin die Wärmepumpe", sub: "Heizungsgesetz-konform seit Welpe" },
-    { id: "sondervermoegen",cat: "wirtschaft",type: "shirt",   color: "cream",   top: "Mein Sondervermögen: 47 Tennisbälle", sub: "Schuldenbremse gilt nicht für Bälle" },
-    { id: "eichhoernchen", cat: "politik",    type: "cap",     color: "red",     top: "Schuldenbremse? Ich bremse nur für Eichhörnchen", sub: "" , badge: "Limitiert" },
-    { id: "ki-chef",       cat: "zeitgeist",  type: "hoodie",  color: "mustard", top: "KI ersetzt viele Jobs. Meinen nicht.", sub: "Chief Kuschel Officer" },
-    { id: "buerokratie",   cat: "politik",    type: "tote",    color: "cream",   top: "Bürokratieabbau: Ich hab den Antrag gefressen", sub: "Formular 27b/6 – war lecker" },
-    { id: "rente",         cat: "politik",    type: "shirt",   color: "sky",     top: "In Hundejahren 70. Arbeite noch Vollzeit.", sub: "Rentenpaket: Sofa + Decke" },
-    { id: "bahn",          cat: "zeitgeist",  type: "mug",     color: "ink",     top: "Pünktlicher als die Bahn", sub: "Außer beim Gassi. Da bleib ich stehen." },
-    { id: "inflation",     cat: "wirtschaft", type: "shirt",   color: "ink",     top: "Inflation trifft mich hart. Napf seit 5 Min leer.", sub: "Verbraucherpreisindex: Leckerli +300 %" },
-    { id: "ki-blase",      cat: "wirtschaft", type: "bandana", color: "sky",     top: "KI-Blase? Ich jag nur Seifenblasen", sub: "" },
-    { id: "fachkraft",     cat: "wirtschaft", type: "hoodie",  color: "red",     top: "Fachkräftemangel? Ich bin Leckerli-Prüferin", sub: "Staatlich nicht anerkannt" },
-    { id: "staubsauger",   cat: "alltag",     type: "shirt",   color: "cream",   top: "Ich hab kein Haarproblem. Du hast ein Staubsaugerproblem.", sub: "", badge: "Bestseller" },
-    { id: "tempolimit",    cat: "politik",    type: "shirt",   color: "forest",  top: "Tempolimit gilt nicht für Zoomies", sub: "0 auf 100 in 0,8 Sekunden" },
-    { id: "homeoffice",    cat: "zeitgeist",  type: "mug",     color: "cream",   top: "Homeoffice ist nur gut, weil ich die Chefin bin", sub: "Meetings: 22 Stunden Nickerchen" },
-    { id: "work-life",     cat: "alltag",     type: "hoodie",  color: "cream",   top: "Work-Life-Balance: 22 h schlafen, 2 h Chaos", sub: "" },
-    { id: "koalition",     cat: "politik",    type: "tote",    color: "mustard", top: "Koalitionsvertrag: Ich krieg das Sofa", sub: "Du kriegst die Ecke. Verhandelbar: nein." },
-    { id: "bitcoin",       cat: "wirtschaft", type: "cap",     color: "ink",     top: "Bitcoin fällt. Mein Ball fällt.", sub: "Ich hol nur einen davon zurück." },
-    { id: "flauschig",     cat: "alltag",     type: "shirt",   color: "mustard", top: "Nicht dick. Flauschig budgetiert.", sub: "" },
-    { id: "willkommen",    cat: "alltag",     type: "bandana", color: "red",     top: "Wachhund? Eher Willkommenskomitee", sub: "", badge: "Für Hunde" },
-    { id: "mietpreis",     cat: "wirtschaft", type: "shirt",   color: "red",     top: "Mietpreisbremse fürs Körbchen. Jetzt.", sub: "Demo um 15 Uhr am Napf" },
-    { id: "deutschlandticket", cat: "zeitgeist", type: "tote", color: "ink",     top: "Deutschlandticket? Ich fahr Kofferraum.", sub: "" },
-    { id: "influencer",    cat: "zeitgeist",  type: "hoodie",  color: "forest",  top: "Ich bin nicht verwöhnt. Ich bin Influencerin.", sub: "Kooperationen nur gegen Käse" },
-    { id: "nachrichten",   cat: "alltag",     type: "mug",     color: "red",     top: "Nachrichten machen mich müde. Schwanzwedeln hilft.", sub: "" }
+    // Kanzleramt & Umfragen
+    { id: "kanzlerin",       cat: "kanzleramt", type: "poster",  color: "cream",   top: "Lilly for Kanzlerin", sub: "Programm: Leckerli. Sofa. Fertig.", photo: 8, badge: "Wahlkampf" },
+    { id: "ruecktritt",      cat: "kanzleramt", type: "hoodie",  color: "ink",     top: "Ich trete nicht zurück. Ich leg mich hin.", sub: "Pressekonferenz beendet", badge: "Neu" },
+    { id: "beliebter",       cat: "kanzleramt", type: "shirt",   color: "red",     top: "Beliebter als jede Regierung", sub: "Ich sag einfach nichts und wedel.", badge: "Bestseller" },
+    { id: "umfragetief",     cat: "kanzleramt", type: "shirt",   color: "mustard", top: "Umfragetief? Ich lieg freiwillig flach.", sub: "Zustimmung am Napf: 100 %" },
+    { id: "deutschlandtrend",cat: "kanzleramt", type: "tote",    color: "mustard", top: "94 % wollen mich streicheln", sub: "Die anderen 6 % lügen. (Lilly-Trend, Okt. 2026)" },
+    { id: "vertrauensfrage", cat: "kanzleramt", type: "cap",     color: "red",     top: "Vertrauensfrage? Ich vertrau jedem mit Wurst.", sub: "" },
+    { id: "koalitionsausschuss", cat: "kanzleramt", type: "mug", color: "cream",   top: "Koalitionsausschuss bis 3 Uhr? Ich: Sofa. Geklärt.", sub: "Ergebnisprotokoll: wurde gefressen" },
+    { id: "regierungserklaerung", cat: "kanzleramt", type: "shirt", color: "ink",  top: "Regierungserklärung: Ich hab Hunger.", sub: "Weitere Fragen? Nein." },
+    { id: "herbst-reformen", cat: "kanzleramt", type: "hoodie",  color: "mustard", top: "Herbst der Reformen: Körbchen umgestellt", sub: "Reicht für dieses Jahr." },
+    { id: "sommerinterview", cat: "kanzleramt", type: "bandana", color: "sky",     top: "Sommerinterview? Ich mach Sommerschlaf.", sub: "" },
+    { id: "wahlplakat",      cat: "kanzleramt", type: "poster",  color: "red",     top: "Ich verspreche nichts. Außer Liebe.", sub: "Die einzige Kandidatin ohne Skandal", photo: 11 },
+
+    // Politik
+    { id: "gassi-great",     cat: "politik",    type: "shirt",   color: "red",     top: "Make Gassi Great Again", sub: "Lilly 2026 · Leckerli für alle", badge: "Bestseller" },
+    { id: "wehrdienst",      cat: "politik",    type: "hoodie",  color: "forest",  top: "Wehrdienst? Ich verteidige nur den Kühlschrank.", sub: "Freiwillig. Rund um die Uhr." },
+    { id: "eichhoernchen",   cat: "politik",    type: "cap",     color: "ink",     top: "Schuldenbremse? Ich bremse nur für Eichhörnchen", sub: "", badge: "Limitiert" },
+    { id: "buerokratie",     cat: "politik",    type: "tote",    color: "cream",   top: "Bürokratieabbau: Ich hab den Antrag gefressen", sub: "Formular 27b/6 – war lecker" },
+    { id: "rente",           cat: "politik",    type: "shirt",   color: "sky",     top: "In Hundejahren 70. Arbeite noch Vollzeit.", sub: "Rentenkommission, ruft mich an." },
+    { id: "waermepumpe",     cat: "politik",    type: "shirt",   color: "mustard", top: "Ich bin die Wärmepumpe", sub: "Heizungsgesetz-konform seit Welpe" },
+    { id: "grundsicherung",  cat: "politik",    type: "shirt",   color: "cream",   top: "Meine Grundsicherung: ein voller Napf", sub: "Nicht verhandelbar." },
+
+    // Wirtschaft
+    { id: "zoelle",          cat: "wirtschaft", type: "hoodie",  color: "ink",     top: "Ich verhandle nur in Leckerli", sub: "Zölle? Akzeptiere ich nicht." },
+    { id: "wachstum",        cat: "wirtschaft", type: "shirt",   color: "mustard", top: "Mein Fell ist das Einzige, was hier noch wächst", sub: "Wachstumsprognose Haare: +300 %", badge: "Neu" },
+    { id: "steuer",          cat: "wirtschaft", type: "mug",     color: "red",     top: "Steuererklärung? Hat der Hund gefressen. Wirklich.", sub: "" },
+    { id: "elster",          cat: "wirtschaft", type: "cap",     color: "cream",   top: "ELSTER? Ich jag nur echte.", sub: "" },
+    { id: "sondervermoegen", cat: "wirtschaft", type: "shirt",   color: "cream",   top: "Mein Sondervermögen: 47 Tennisbälle", sub: "Schuldenbremse gilt nicht für Bälle" },
+    { id: "bitcoin",         cat: "wirtschaft", type: "cap",     color: "red",     top: "Bitcoin fällt. Mein Ball fällt.", sub: "Ich hol nur einen davon zurück." },
+    { id: "fachkraft",       cat: "wirtschaft", type: "hoodie",  color: "red",     top: "Fachkräftemangel? Ich bin Leckerli-Prüferin", sub: "Staatlich nicht anerkannt" },
+
+    // Zeitgeist
+    { id: "ki-chef",         cat: "zeitgeist",  type: "hoodie",  color: "cream",   top: "KI ersetzt viele Jobs. Meinen nicht.", sub: "Chief Kuschel Officer" },
+    { id: "bahn",            cat: "zeitgeist",  type: "mug",     color: "ink",     top: "Pünktlicher als die Bahn", sub: "Außer beim Gassi. Da bleib ich stehen." },
+    { id: "deutschlandticket", cat: "zeitgeist", type: "tote",   color: "ink",     top: "Deutschlandticket teurer? Ich fahr Kofferraum.", sub: "" },
+    { id: "bildschirmzeit",  cat: "zeitgeist",  type: "shirt",   color: "sky",     top: "Bildschirmzeit: 0. Kuschelzeit: alles.", sub: "" },
+    { id: "influencer",      cat: "zeitgeist",  type: "hoodie",  color: "forest",  top: "Ich bin nicht verwöhnt. Ich bin Influencerin.", sub: "Kooperationen nur gegen Käse", photo: 0 },
+    { id: "ki-blase",        cat: "zeitgeist",  type: "bandana", color: "mustard", top: "KI-Blase? Ich jag nur Seifenblasen", sub: "" },
+
+    // Hundealltag
+    { id: "staubsauger",     cat: "alltag",     type: "shirt",   color: "cream",   top: "Ich hab kein Haarproblem. Du hast ein Staubsaugerproblem.", sub: "", badge: "Bestseller" },
+    { id: "flauschig",       cat: "alltag",     type: "shirt",   color: "red",     top: "Nicht dick. Flauschig budgetiert.", sub: "", photo: 3 },
+    { id: "willkommen",      cat: "alltag",     type: "bandana", color: "red",     top: "Wachhund? Eher Willkommenskomitee", sub: "", badge: "Für Hunde" },
+    { id: "work-life",       cat: "alltag",     type: "mug",     color: "cream",   top: "Work-Life-Balance: 22 h schlafen, 2 h Chaos", sub: "" }
   ],
 
-  // Kurze Sprüche für Laufband und Spruch-Automat
+  // Kurze Sprüche für das Laufband
   ticker: [
     "Good Girl. Bad Influence.",
+    "Umfragewerte: 100 % Wedeln",
+    "Kein Rücktritt, nur Hinlegen",
     "Haare sind das neue Glitzer",
-    "100 % Fellhaftung",
     "Sitz. Platz. Shoppen.",
-    "Golden Hour ist meine Uhrzeit",
-    "Ich apportiere nur Komplimente",
+    "Koalition mit dem Sofa steht",
     "Wedeln ist mein Cardio"
   ],
 
-  // Spruch-Automat: Anfang + Mitte + Ende werden kombiniert
+  // Spruch-Automat: Anfang + Mitte + Ende
   slot: {
-    a: ["Schuldenbremse?", "Die Börse crasht?", "Neue Koalition?", "Inflation?", "KI übernimmt?", "Zölle steigen?", "Bahn verspätet?", "Montag?"],
-    b: ["Ich", "Lilly", "Mein Hund", "Die Chefin"],
-    c: ["bleibt flauschig.", "will nur Käse.", "hat 47 Bälle gespart.", "wedelt trotzdem.", "liegt auf dem Sofa.", "fordert Leckerli-Grundeinkommen.", "jagt Eichhörnchen.", "macht Zoomies."]
+    a: ["Umfragetief?", "Koalitionskrach?", "Herbst der Reformen?", "Rentenstreit?", "Zölle steigen?", "Wachstum bei 0,0 %?", "KI übernimmt?", "Bahn verspätet?", "Sondersitzung?", "Montag?"],
+    b: ["Ich", "Lilly", "Die Kanzlerin der Herzen", "Mein Hund", "Die Chefin"],
+    c: ["bleibt flauschig.", "will nur Käse.", "wedelt trotzdem.", "legt sich einfach hin.", "liegt im Umfragehoch.", "fordert Leckerli-Grundeinkommen.", "jagt Eichhörnchen.", "macht Zoomies.", "vertagt alles auf nach dem Nickerchen."]
+  },
+
+  // Lilly-Trend: Umfrage-Parodie. base = Startstimmen
+  poll: {
+    question: "Wenn am Sonntag Gassi-Wahl wäre …",
+    options: [
+      { id: "lilly",  label: "Lilly als Kanzlerin",            base: 612 },
+      { id: "nap",    label: "Erst mal ein Nickerchen",          base: 233 },
+      { id: "sofa",   label: "Große Koalition: Sofa + Decke",    base: 154 },
+      { id: "cheese", label: "Weiß nicht, hab Käse gesehen",     base: 81 }
+    ],
+    footnote: "Befragt: 1.080 Hunde und 3 Katzen (ungültig). Fehlertoleranz ± 1 Leckerli."
   },
 
   reviews: [
     { name: "Jana & Bruno", dog: "Labrador", text: "Mein Nachbar hat beim Gassi so gelacht, dass er seinen eigenen Hund vergessen hat.", stars: 5 },
-    { name: "Mehmet & Luna", dog: "Golden Retriever", text: "Der Hoodie hält sogar die Haare von Luna. Fast. Okay, nicht wirklich. Aber er ist bequem.", stars: 5 },
-    { name: "Sabine & Paul", dog: "Dackel", text: "Die Tasse sorgt im Büro täglich für Diskussionen über Wärmepumpen. Zehn von zehn.", stars: 5 },
+    { name: "Mehmet & Luna", dog: "Golden Retriever", text: "Seit ich das Rücktritt-Hoodie trage, legen sich im Büro alle hin. Produktivität: egal. Stimmung: top.", stars: 5 },
+    { name: "Sabine & Paul", dog: "Dackel", text: "Das Wahlplakat hängt im Flur. Mein Mann hat schon zweimal unterschrieben.", stars: 5 },
     { name: "Tom & Kiwi", dog: "Mischling", text: "Kiwi trägt jetzt das Bandana und ist offiziell arroganter als ich. Danke für nichts.", stars: 5 }
   ]
+};
+
+// Bildquelle: zuerst die lokale WebP-Kopie, bei Fehler das Original bei ImgBB.
+// i = Index in photos oder "cutout"
+window.LILLY.img = function (i) {
+  const L = window.LILLY;
+  if (i === "cutout") return { src: "assets/img/cutout.webp", fallback: L.cutout };
+  return { src: "assets/img/lilly-" + String(i + 1).padStart(2, "0") + ".webp", fallback: L.photos[i] };
 };

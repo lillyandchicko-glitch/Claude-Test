@@ -10,6 +10,8 @@
   const hasGsap = !!(window.gsap && window.ScrollTrigger) && !reduced;
   const euro = (n) => n.toLocaleString("de-DE", { style: "currency", currency: "EUR" });
   const FREE_SHIP = 60;
+  const hasPic = (p) => p !== undefined && p !== null && p !== "";
+  const priceOf = (type, photo) => D.types[type].price + (hasPic(photo) ? D.photoSurcharge : 0);
 
   // Bühnenfarbe hinter dem Produkt (Kontrast zur Stofffarbe)
   const STAGE = { cream: "#ffb81c", red: "#ffd8a8", mustard: "#e8361e", ink: "#ff9ec7", sky: "#fff1dc", forest: "#ffb81c" };
@@ -134,16 +136,16 @@
   function cardHTML(d) {
     const t = D.types[d.type];
     return `
-      <button class="card" data-id="${d.id}" style="--stage:${STAGE[d.color]}" aria-label="${d.top} – ${t.name}, ${euro(t.price)}">
+      <button class="card" data-id="${d.id}" style="--stage:${STAGE[d.color]}" aria-label="${d.top} – ${t.name}, ${euro(priceOf(d.type, d.photo))}">
         <div class="card__stage">
           ${d.badge ? `<span class="card__badge">${d.badge}</span>` : ""}
-          ${mockup(d.type, d.color, d.top, d.sub)}
+          ${mockup(d.type, d.color, d.top, d.sub, d.photo)}
           <span class="card__quick" aria-hidden="true">+</span>
         </div>
         <div class="card__body">
           <h3 class="card__title">${d.top}</h3>
-          <span class="card__price">${euro(t.price)}</span>
-          <p class="card__meta">${t.name} · ${t.colors.length} Farben</p>
+          <span class="card__price">${euro(priceOf(d.type, d.photo))}</span>
+          <p class="card__meta">${t.name} · ${t.colors.length} Farben${hasPic(d.photo) ? " · mit Lilly-Foto" : ""}</p>
           <div class="card__dots" aria-hidden="true">${t.colors.map((c) => `<i style="background:${D.colors[c].fabric}"></i>`).join("")}</div>
         </div>
       </button>`;
@@ -204,7 +206,7 @@
      Produktdetail
      ------------------------------------------------------------------ */
   const pdp = $("#pdp");
-  const sel = { design: null, type: "shirt", color: "cream", size: "M", qty: 1 };
+  const sel = { design: null, type: "shirt", color: "cream", size: "M", qty: 1, photo: null };
 
   function openPdp(design, origin) {
     sel.design = design;
@@ -212,6 +214,7 @@
     sel.color = design.color;
     sel.size = pickSize(design.type, "M");
     sel.qty = 1;
+    sel.photo = hasPic(design.photo) ? design.photo : null;
     renderPdp(false);
     lenis && lenis.stop();
     pdp.showModal();
@@ -227,12 +230,15 @@
     if (!t.sizes.includes(sel.size)) sel.size = pickSize(sel.type, sel.size);
     const stage = $("#pdpStage");
     stage.style.setProperty("--stage", STAGE[sel.color]);
-    stage.innerHTML = mockup(sel.type, sel.color, d.top, d.sub);
+    stage.innerHTML = mockup(sel.type, sel.color, d.top, d.sub, sel.photo);
     if (animate && hasGsap) gsap.from(stage.firstElementChild, { scale: .85, rotate: 4, duration: .6, ease: "back.out(2)" });
     $("#pdpType").textContent = t.name + " · " + (D.categories.find((c) => c.id === d.cat) || { label: "Unikat" }).label;
     $("#pdpTitle").textContent = d.top;
     $("#pdpSub").textContent = d.sub || "";
-    $("#pdpPrice").textContent = euro(t.price);
+    $("#pdpPrice").textContent = euro(priceOf(sel.type, sel.photo));
+    $("#pdpPhotoName").textContent = hasPic(sel.photo) ? `Lilly-Foto Nr. ${sel.photo + 1} (+${euro(D.photoSurcharge)})` : "Nur Spruch";
+    $("#pdpPhotos").innerHTML = `<button type="button" class="motif motif--none" data-photo="" aria-pressed="${!hasPic(sel.photo)}" aria-label="Nur Spruch, ohne Foto">Aa</button>` +
+      D.photos.map((_, i) => { const im = D.img(i); return `<button type="button" class="motif" data-photo="${i}" aria-pressed="${sel.photo === i}" aria-label="Lilly-Foto ${i + 1}"><img src="${im.src}" data-fallback="${im.fallback}" referrerpolicy="no-referrer" onerror="lillyImgFail(this)" alt="" loading="lazy"></button>`; }).join("");
     $("#pdpTypes").innerHTML = Object.entries(D.types).map(([k, v]) =>
       `<button type="button" class="pill pill--small" data-ptype="${k}" aria-pressed="${k === sel.type}">${v.name}</button>`).join("");
     $("#pdpColors").innerHTML = t.colors.map((c) =>
@@ -247,6 +253,8 @@
     const pt = e.target.closest("[data-ptype]"); if (pt) { sel.type = pt.dataset.ptype; renderPdp(); }
     const c = e.target.closest("[data-color]"); if (c) { sel.color = c.dataset.color; renderPdp(); }
     const s = e.target.closest("[data-size]"); if (s) { sel.size = s.dataset.size; renderPdp(false); }
+    const ph = e.target.closest("[data-photo]");
+    if (ph) { const keep = $("#pdpPhotos").scrollLeft; sel.photo = ph.dataset.photo === "" ? null : +ph.dataset.photo; renderPdp(); $("#pdpPhotos").scrollLeft = keep; }
   });
   pdp.addEventListener("close", () => lenis && lenis.start());
   $("#qtyMinus").addEventListener("click", () => { sel.qty = Math.max(1, sel.qty - 1); $("#qty").textContent = sel.qty; });
@@ -262,14 +270,14 @@
   /* ------------------------------------------------------------------
      Warenkorb
      ------------------------------------------------------------------ */
-  let cart = store.get("lilly-cart", []);
+  let cart = store.get("lilly-cart", []).filter((i) => D.types[i.type] && D.colors[i.color]);
   const cartEl = $("#cart");
 
   function addToCart(item) {
-    const key = [item.design.id, item.type, item.color, item.size].join("|");
+    const key = [item.design.id, item.type, item.color, item.size, item.photo].join("|");
     const found = cart.find((i) => i.key === key);
     if (found) found.qty += item.qty;
-    else cart.push({ key, design: item.design, type: item.type, color: item.color, size: item.size, qty: item.qty });
+    else cart.push({ key, design: item.design, type: item.type, color: item.color, size: item.size, photo: item.photo, qty: item.qty });
     saveCart();
     const b = $("#cartOpen");
     b.classList.remove("is-bump"); void b.offsetWidth; b.classList.add("is-bump");
@@ -277,20 +285,20 @@
   function saveCart() { store.set("lilly-cart", cart); renderCart(); }
   function renderCart() {
     const count = cart.reduce((n, i) => n + i.qty, 0);
-    const total = cart.reduce((n, i) => n + i.qty * D.types[i.type].price, 0);
+    const total = cart.reduce((n, i) => n + i.qty * priceOf(i.type, i.photo), 0);
     $("#cartCount").textContent = count;
     cartEl.classList.toggle("is-empty", !cart.length);
     $("#cartItems").innerHTML = cart.map((i, idx) => `
       <li class="cart__item">
-        <div class="cart__thumb" style="--stage:${STAGE[i.color]}">${mockup(i.type, i.color, i.design.top, "")}</div>
+        <div class="cart__thumb" style="--stage:${STAGE[i.color]}">${mockup(i.type, i.color, i.design.top, "", i.photo)}</div>
         <div>
           <h4>${i.design.top}</h4>
-          <p>${D.types[i.type].name} · ${D.colors[i.color].label} · ${i.size}</p>
+          <p>${D.types[i.type].name} · ${D.colors[i.color].label} · ${i.size}${hasPic(i.photo) ? " · Foto " + (i.photo + 1) : ""}</p>
           <div class="mini-qty">
             <button data-dec="${idx}" aria-label="Menge verringern">−</button><span>${i.qty}</span><button data-inc="${idx}" aria-label="Menge erhöhen">+</button>
           </div>
         </div>
-        <div class="cart__price">${euro(i.qty * D.types[i.type].price)}<button class="cart__remove" data-del="${idx}">Entfernen</button></div>
+        <div class="cart__price">${euro(i.qty * priceOf(i.type, i.photo))}<button class="cart__remove" data-del="${idx}">Entfernen</button></div>
       </li>`).join("");
     $("#cartTotal").textContent = euro(total);
     const left = FREE_SHIP - total;
@@ -388,15 +396,19 @@
     "Offiziell beste Hündin", "Sonntag. Sofa. Sieg.", "Sieht unschuldig aus", "War's nicht", "Modelt nur Hoodies", "Haare überall, Liebe auch",
     "Termin beim Friseur? Nö.", "Plant den nächsten Drop", "Zoomies in 3…2…1", "Bitte nicht stören", "Schnüffelt die Konkurrenz aus", "Wartet auf Komplimente",
     "Lächelt für die Kamera", "Wochenende!"];
-  $("#galleryTrack").innerHTML = D.photos.map((src, i) => `
+  $("#galleryTrack").innerHTML = D.photos.map((_, i) => { const im = D.img(i); return `
     <figure class="polaroid" style="--r:${(i % 2 ? 1 : -1) * (1 + (i * 7) % 4)}deg">
-      <img src="${src}" alt="Lilly: ${captions[i % captions.length]}" loading="lazy" decoding="async" width="400" height="500" />
+      <img src="${im.src}" data-fallback="${im.fallback}" referrerpolicy="no-referrer" onerror="lillyImgFail(this)" alt="Lilly: ${captions[i % captions.length]}" decoding="async" width="400" height="500" />
       <figcaption>${captions[i % captions.length]}</figcaption>
-    </figure>`).join("");
-  $$("#galleryTrack img").forEach((img) => img.addEventListener("error", () => { img.closest(".polaroid").remove();
-    if (!$(".polaroid")) $("#galerie").hidden = true;
-    if (hasGsap) ScrollTrigger.refresh();
-  }));
+      <button class="polaroid__buy" data-photo-buy="${i}">Auf Merch drucken</button>
+    </figure>`; }).join("");
+  // Foto aus der Galerie direkt auf ein Shirt
+  $("#galleryTrack").addEventListener("click", (e) => {
+    const b = e.target.closest("[data-photo-buy]");
+    if (!b) return;
+    const i = +b.dataset.photoBuy;
+    openPdp({ id: "foto-" + (i + 1), cat: "foto", type: "shirt", color: "cream", top: "Good Girl. Bad Influence.", sub: captions[i % captions.length], photo: i });
+  });
 
   $("#reviews").innerHTML = D.reviews.map((r) => `
     <figure class="review">
@@ -406,9 +418,9 @@
     </figure>`).join("");
 
   $("#instaLink").href = D.instagram;
-  const instaPics = [D.photos[8], D.photos[11], D.photos[0], D.photos[13], D.photos[5]];
+  const instaPics = [8, 11, 0, 13, 5].map((i) => D.img(i));
   const stack = $("#instaStack");
-  stack.innerHTML = instaPics.map((src, i) => `<img src="${src}" alt="" loading="lazy" style="rotate:${(i - 2) * 6}deg;z-index:${i}" />`).join("");
+  stack.innerHTML = instaPics.map((im, i) => `<img src="${im.src}" data-fallback="${im.fallback}" referrerpolicy="no-referrer" onerror="lillyImgFail(this)" alt="" style="rotate:${(i - 2) * 6}deg;z-index:${i}" />`).join("");
   stack.addEventListener("click", () => {
     const imgs = $$("img", stack);
     const top = imgs.reduce((a, b) => (+getComputedStyle(b).zIndex > +getComputedStyle(a).zIndex ? b : a));
@@ -416,6 +428,37 @@
     if (hasGsap) gsap.timeline().to(top, { x: 240, rotate: 20, duration: .35, ease: "power2.in" }).add(send).to(top, { x: 0, rotate: 0, duration: .5, ease: "back.out(1.6)" });
     else send();
   });
+
+  /* ------------------------------------------------------------------
+     Lilly-Trend (Umfrage-Parodie)
+     ------------------------------------------------------------------ */
+  const poll = D.poll;
+  let myVote = store.get("lilly-vote", null);
+  function renderPoll(animate) {
+    const votes = poll.options.map((o) => o.base + (myVote === o.id ? 1 : 0));
+    const sum = votes.reduce((a, b) => a + b, 0);
+    $("#pollQ").textContent = poll.question;
+    $("#pollNote").textContent = poll.footnote;
+    $("#pollOpts").innerHTML = poll.options.map((o, i) => {
+      const pct = Math.round((votes[i] / sum) * 100);
+      return `<button class="poll__opt${myVote === o.id ? " is-mine" : ""}" data-vote="${o.id}" aria-pressed="${myVote === o.id}" style="--w:${animate ? 0 : pct}%" data-pct="${pct}">
+        <span class="poll__bar"></span><span class="poll__label">${o.label}</span><span class="poll__pct">${myVote ? pct + " %" : ""}</span></button>`;
+    }).join("");
+    $("#pollOpts").classList.toggle("is-voted", !!myVote);
+    if (animate) requestAnimationFrame(() => $$(".poll__opt").forEach((b) => b.style.setProperty("--w", b.dataset.pct + "%")));
+  }
+  $("#pollOpts").addEventListener("click", (e) => {
+    const b = e.target.closest("[data-vote]");
+    if (!b) return;
+    myVote = b.dataset.vote;
+    store.set("lilly-vote", myVote);
+    renderPoll(true);
+    const r = b.getBoundingClientRect();
+    confetti(r.right - 40, r.top + r.height / 2, 40);
+    toast(myVote === "lilly" ? "Danke! Lilly bleibt im Umfragehoch." : "Stimme gezählt. Lilly ist trotzdem vorne.");
+  });
+  renderPoll(false);
+  $("#designCount").textContent = D.designs.length;
 
   $("#newsForm").addEventListener("submit", (e) => {
     e.preventDefault();
@@ -581,6 +624,9 @@
       gsap.from(parts.length ? parts : t, { yPercent: 100, rotate: 6, opacity: 0, duration: 1, ease: "back.out(1.6)", stagger: .08,
         scrollTrigger: { trigger: t, start: "top 85%" } });
     });
+
+    // Lilly-Trend: Balken wachsen beim Reinscrollen
+    ScrollTrigger.create({ trigger: ".poll", start: "top 75%", once: true, onEnter: () => renderPoll(true) });
 
     // Automat
     gsap.from(".machine", { rotate: 8, y: 120, opacity: 0, duration: 1.2, ease: "elastic.out(1, .7)", scrollTrigger: { trigger: ".automat", start: "top 70%" } });

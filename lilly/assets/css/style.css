@@ -766,7 +766,7 @@ html:not(.js) .manifest__text .w, .no-anim .manifest__text .w { opacity: 1; }
   box-shadow: 12px 12px 0 var(--ink);
   overflow: hidden;
 }
-.pdp[open] { display: grid; grid-template-columns: 1.1fr 1fr; animation: pop .55s var(--bounce); }
+.pdp[open] { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); animation: pop .55s var(--bounce); }
 .pdp::backdrop { background: rgba(27, 15, 10, .6); backdrop-filter: blur(6px); animation: fade .3s; }
 @keyframes pop { from { opacity: 0; transform: translateY(40px) scale(.94); } }
 @keyframes fade { from { opacity: 0; } }
@@ -789,7 +789,7 @@ html:not(.js) .manifest__text .w, .no-anim .manifest__text .w { opacity: 1; }
   min-height: 420px;
 }
 .pdp__stage .mock { width: min(100%, 520px); }
-.pdp__info { padding: clamp(24px, 4vw, 48px); overflow-y: auto; max-height: calc(100svh - 30px); }
+.pdp__info { min-width: 0; padding: clamp(24px, 4vw, 48px); overflow-y: auto; max-height: calc(100svh - 30px); }
 .pdp__title { margin: 0 0 .4rem; padding-right: 50px; font-family: var(--display); font-weight: 400; font-size: clamp(1.8rem, 3.4vw, 2.8rem); line-height: 1; }
 .pdp__sub { margin: 0 0 1rem; font-family: var(--hand); font-size: 1.15rem; color: var(--red); }
 .pdp__price { margin: 0 0 1.2rem; font-family: var(--display); font-size: 2rem; }
@@ -811,7 +811,7 @@ html:not(.js) .manifest__text .w, .no-anim .manifest__text .w { opacity: 1; }
 .pdp__usp { list-style: none; margin: 0; padding: 0; display: grid; gap: .35rem; font-size: .95rem; font-weight: 500; }
 .pdp__usp li::before { content: "🐾 "; }
 @media (max-width: 820px) {
-  .pdp[open] { grid-template-columns: 1fr; overflow-y: auto; }
+  .pdp[open] { grid-template-columns: minmax(0, 1fr); overflow-y: auto; }
   .pdp__stage { border-right: 0; border-bottom: 3px solid var(--ink); min-height: 0; padding: 30px; }
   .pdp__stage .mock { width: 70%; }
   .pdp__info { max-height: none; overflow: visible; }
@@ -884,3 +884,112 @@ html:not(.js) .manifest__text .w, .no-anim .manifest__text .w { opacity: 1; }
   *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
   .grain { display: none; }
 }
+
+/* ---------- Foto-Druck ---------- */
+.print__photo { display: block; flex: none; object-fit: cover; background: rgba(255,255,255,.3); }
+.print__photo--round { width: 62%; aspect-ratio: 1; border-radius: 50%; border: 1.4cqw solid var(--print-ink, var(--ink)); }
+.print__photo--rect { width: 100%; aspect-ratio: 4 / 4.2; border-radius: 1.5cqw; border: 1.2cqw solid var(--print-ink, var(--ink)); }
+.mock--cap .print__photo--round, .mock--bandana .print__photo--round { width: 46%; border-width: 1cqw; }
+.mock--mug .print__photo--round { width: 54%; }
+.mock.has-photo .print { gap: 1.6cqw; justify-content: flex-start; }
+.mock--mug.has-photo .print__sub, .mock--cap.has-photo .print__sub, .mock--bandana.has-photo .print__sub { display: none; }
+.mock--poster .print__top { text-transform: uppercase; letter-spacing: -.01em; }
+
+/* Motiv-Auswahl im Produktdialog */
+.motifs {
+  display: flex;
+  gap: .5rem;
+  overflow-x: auto;
+  padding: 4px 4px 10px;
+  margin: 0 -4px;
+  scroll-snap-type: x proximity;
+  scrollbar-width: thin;
+}
+.motif {
+  flex: 0 0 auto;
+  width: 58px; height: 58px;
+  padding: 0;
+  border: 3px solid var(--ink);
+  border-radius: 16px;
+  overflow: hidden;
+  background: var(--cream-2);
+  scroll-snap-align: start;
+  transition: transform .3s var(--bounce), box-shadow .2s;
+}
+.motif img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.motif:hover { transform: translateY(-3px) rotate(-3deg); }
+.motif[aria-pressed="true"] { box-shadow: 0 0 0 3px var(--cream), 0 0 0 6px var(--red); }
+.motif--none { font-family: var(--display); font-size: 1.3rem; color: var(--red); }
+
+/* Galerie: Foto direkt bestellen */
+.polaroid { position: relative; }
+.polaroid__buy {
+  position: absolute; left: 50%; top: 42%;
+  translate: -50% 0;
+  padding: .7em 1.1em;
+  border: 3px solid var(--ink);
+  border-radius: 999px;
+  background: var(--red); color: var(--cream);
+  font-family: var(--display); font-size: .95rem; white-space: nowrap;
+  box-shadow: 4px 4px 0 var(--ink);
+  opacity: 0; scale: .7;
+  transition: opacity .25s, scale .4s var(--bounce);
+}
+.polaroid:hover .polaroid__buy, .polaroid__buy:focus-visible { opacity: 1; scale: 1; }
+@media (hover: none) { .polaroid__buy { opacity: 1; scale: 1; top: auto; bottom: 64px; font-size: .85rem; } }
+img.is-broken { object-fit: contain !important; }
+
+/* ---------- Lilly-Trend (Umfrage) ---------- */
+.poll {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+  gap: clamp(28px, 5vw, 80px);
+  align-items: center;
+  max-width: 1500px;
+  margin: 0 auto;
+  padding: clamp(60px, 10vw, 140px) var(--gutter);
+}
+.poll .section-title { color: var(--red); font-size: clamp(2.8rem, 8vw, 7.5rem); hyphens: manual; }
+.poll__q { font-family: var(--display); font-size: clamp(1.3rem, 2.4vw, 2rem); margin: 1rem 0 0; }
+.poll__card {
+  padding: clamp(18px, 3vw, 32px);
+  background: var(--sky);
+  border: 3px solid var(--ink);
+  border-radius: var(--radius);
+  box-shadow: 8px 8px 0 var(--ink);
+  rotate: 1deg;
+}
+.poll__opts { display: grid; gap: .7rem; }
+.poll__opt {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  min-height: 62px;
+  padding: .8rem 1.1rem;
+  border: 3px solid var(--ink);
+  border-radius: 18px;
+  background: var(--cream);
+  text-align: left;
+  font-weight: 700;
+  font-size: 1.05rem;
+  overflow: hidden;
+  isolation: isolate;
+  transition: transform .3s var(--bounce);
+}
+.poll__opt:hover { transform: translateX(6px); }
+.poll__bar {
+  position: absolute; inset: 0 auto 0 0;
+  z-index: -1;
+  width: var(--w, 0%);
+  background: var(--mustard);
+  transition: width 1.2s var(--ease);
+}
+.poll__opts:not(.is-voted) .poll__bar { width: 0; }
+.poll__opt.is-mine .poll__bar { background: var(--pink); }
+.poll__opt.is-mine { border-color: var(--red); box-shadow: 4px 4px 0 var(--red); }
+.poll__opt.is-mine .poll__label::after { content: " ✓"; }
+.poll__pct { font-family: var(--display); font-size: 1.4rem; }
+.poll__note { margin: 1rem 0 0; font-size: .9rem; font-weight: 500; opacity: .8; }
+@media (max-width: 900px) { .poll { grid-template-columns: 1fr; } .poll__card { rotate: 0deg; } }
