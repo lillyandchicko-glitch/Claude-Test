@@ -11,7 +11,7 @@
   const euro = (n) => n.toLocaleString("de-DE", { style: "currency", currency: "EUR" });
   const FREE_SHIP = 60;
   const hasPic = (p) => p !== undefined && p !== null && p !== "";
-  const photoLabel = (p) => p === "cutout" ? "Lilly liegt flach" : "Lilly-Foto Nr. " + (+p + 1);
+  const photoLabel = (p) => p === "cutout" ? "Lilly liegt flach" : "Foto Nr. " + (+p + 1);
   const priceOf = (type, photo) => D.types[type].price + (hasPic(photo) ? D.photoSurcharge : 0);
 
   // Bühnenfarbe hinter dem Produkt (Kontrast zur Stofffarbe)
@@ -146,7 +146,7 @@
         <div class="card__body">
           <h3 class="card__title">${d.top}</h3>
           <span class="card__price">${euro(priceOf(d.type, d.photo))}</span>
-          <p class="card__meta">${t.name} · ${t.colors.length} Farben${hasPic(d.photo) ? " · mit Lilly-Foto" : ""}</p>
+          <p class="card__meta">${t.name} · ${t.colors.length} Farben${hasPic(d.photo) ? " · mit Foto" : ""}</p>
           <div class="card__dots" aria-hidden="true">${t.colors.map((c) => `<i style="background:${D.colors[c].fabric}"></i>`).join("")}</div>
         </div>
       </button>`;
@@ -453,7 +453,7 @@
     renderPoll(true);
     const r = b.getBoundingClientRect();
     confetti(r.right - 40, r.top + r.height / 2, 40);
-    toast(myVote === "lilly" ? "Danke! Lilly bleibt im Umfragehoch." : "Stimme gezählt. Lilly ist trotzdem vorne.");
+    toast(myVote === "lilly" ? "Danke! Lilly bleibt im Umfragehoch." : myVote === "toffee" ? "Toffee bedankt sich und frisst den Stimmzettel." : "Stimme gezählt. Lilly ist trotzdem vorne.");
   });
   renderPoll(false);
   $("#designCount").textContent = D.designs.length;

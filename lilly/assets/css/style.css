@@ -990,7 +990,7 @@ img.is-broken { object-fit: contain !important; }
 .poll__opt.is-mine .poll__bar { background: var(--pink); }
 .poll__opt.is-mine { border-color: var(--red); box-shadow: 4px 4px 0 var(--red); }
 .poll__opt.is-mine .poll__label::after { content: " ✓"; }
-.poll__pct { font-family: var(--display); font-size: 1.4rem; }
+.poll__pct { font-family: var(--display); font-size: 1.4rem; white-space: nowrap; }
 .poll__note { margin: 1rem 0 0; font-size: .9rem; font-weight: 500; opacity: .8; }
 @media (max-width: 900px) { .poll { grid-template-columns: 1fr; } .poll__card { rotate: 0deg; } }
 

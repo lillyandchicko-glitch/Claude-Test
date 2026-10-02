@@ -32,17 +32,18 @@ window.LILLY = {
     "https://i.ibb.co/nqXmCMHK/Generated-Image-May-03-2026-6-48-PM-2.jpg"
   ],
 
+  // Die Hunde: Lilly ist die Helle, Toffee die Dunkle (Rote).
   // photos[0–5] sind freigestellt (transparenter Hintergrund) → ideal für den Druck
   cutouts: [0, 1, 2, 3, 4, 5],
   // Bildunterschriften in der Galerie (gleiche Reihenfolge wie photos)
   captions: [
-    "Pose fürs Wahlplakat", "Zweiter Versuch, gleiche Pose", "Die Kollegin vom Wahlkampfteam",
-    "Pressesprecherin, hört zu", "Hat eine Frage an die Regierung", "Koalitionsverhandlungen, Tag 3",
-    "Bürgersprechstunde", "Infrastrukturprojekt im Stadtpark", "Chefin im Dienst",
-    "Staubsauger-Gipfel ohne Ergebnis", "Lauscht am Koalitionsausschuss", "Doppelspitze",
-    "Umfragetief, freiwillig", "Schlammschlacht im Wahlkampf", "Haben die Schuhe sondiert",
-    "Dienstwagen, Fenster unten", "Offizielles Pressefoto", "Tritt nicht zurück. Liegt.",
-    "Haushaltsdebatte", "Hat Käse gesehen"
+    "Lilly posiert fürs Wahlplakat", "Lilly, zweiter Versuch", "Toffee leitet das Wahlkampfteam",
+    "Toffee hört der Regierung zu", "Toffee hat eine Rückfrage", "Koalitionsverhandlungen, Tag 3",
+    "Bürgersprechstunde mit Lilly & Toffee", "Toffees Infrastrukturprojekt im Stadtpark", "Chefin im Dienst",
+    "Toffee protestiert, Lilly sitzt es aus", "Lauschen am Koalitionsausschuss", "Die Doppelspitze",
+    "Lilly im Umfragetief, freiwillig", "Toffee: Schlammschlacht. Lilly: bleibt sauber.", "Ressortverteilung: Toffee Socken, Lilly Schuhe",
+    "Dienstwagen, Fenster unten", "Offizielles Pressefoto der Doppelspitze", "Lilly tritt nicht zurück. Liegt.",
+    "Haushaltsdebatte: Toffee prüft den Müll", "Beide haben Käse gesehen"
   ],
 
   // Produktarten: Preis in Euro, verfügbare Farben, Größen
@@ -70,6 +71,7 @@ window.LILLY = {
   categories: [
     { id: "all",        label: "Alle" },
     { id: "kanzleramt", label: "Kanzleramt & Umfragen" },
+    { id: "doppelspitze", label: "Lilly & Toffee" },
     { id: "politik",    label: "Politik" },
     { id: "wirtschaft", label: "Wirtschaft" },
     { id: "zeitgeist",  label: "Zeitgeist" },
@@ -91,6 +93,17 @@ window.LILLY = {
     { id: "herbst-reformen", cat: "kanzleramt", type: "hoodie",  color: "mustard", top: "Herbst der Reformen: Körbchen umgestellt", sub: "Reicht für dieses Jahr." },
     { id: "sommerinterview", cat: "kanzleramt", type: "bandana", color: "sky",     top: "Sommerinterview? Ich mach Sommerschlaf.", sub: "" },
     { id: "wahlplakat",      cat: "kanzleramt", type: "poster",  color: "red",     top: "Ich verspreche nichts. Außer Liebe.", sub: "Die Doppelspitze ohne Skandal", photo: 16 },
+
+    // Lilly & Toffee
+    { id: "doppelspitze",    cat: "doppelspitze", type: "shirt", color: "cream",   top: "Doppelspitze: Lilly regiert, Toffee randaliert.", sub: "Koalitionsvertrag liegt im Körbchen", photo: 5, badge: "Neu" },
+    { id: "team-lilly",      cat: "doppelspitze", type: "shirt", color: "sky",     top: "Team Lilly", sub: "Ruhe, Fell und Würde", photo: 0 },
+    { id: "team-toffee",     cat: "doppelspitze", type: "shirt", color: "mustard", top: "Team Toffee", sub: "Chaos mit Stammbaum", photo: 3 },
+    { id: "opposition",      cat: "doppelspitze", type: "hoodie", color: "ink",    top: "Toffee ist nicht frech. Toffee ist Opposition.", sub: "Fraktionsstärke: 1 Hund, 4 Pfoten", photo: 2 },
+    { id: "grosse-koalition",cat: "doppelspitze", type: "tote",  color: "cream",   top: "Große Koalition: Hell + Dunkel", sub: "Einig nur beim Futter", photo: 5 },
+    { id: "toffee-wars",     cat: "doppelspitze", type: "bandana", color: "red",   top: "Toffee war's.", sub: "", badge: "Für Hunde" },
+    { id: "lilly-wars-nicht",cat: "doppelspitze", type: "bandana", color: "sky",   top: "Ich war's nicht. Frag Toffee.", sub: "" },
+    { id: "haushaltsdebatte",cat: "doppelspitze", type: "mug",   color: "ink",     top: "Haushaltsdebatte? Toffee hat den Müll schon geprüft.", sub: "Ergebnis: lecker" },
+    { id: "pressefoto",      cat: "doppelspitze", type: "poster", color: "mustard", top: "Lilly & Toffee 2026", sub: "Gemeinsam gegen Staubsauger", photo: 16 },
 
     // Politik
     { id: "gassi-great",     cat: "politik",    type: "shirt",   color: "red",     top: "Make Gassi Great Again", sub: "Lilly 2026 · Leckerli für alle", badge: "Bestseller" },
@@ -139,7 +152,7 @@ window.LILLY = {
   // Spruch-Automat: Anfang + Mitte + Ende
   slot: {
     a: ["Umfragetief?", "Koalitionskrach?", "Herbst der Reformen?", "Rentenstreit?", "Zölle steigen?", "Wachstum bei 0,0 %?", "KI übernimmt?", "Bahn verspätet?", "Sondersitzung?", "Montag?"],
-    b: ["Ich", "Lilly", "Die Kanzlerin der Herzen", "Mein Hund", "Die Chefin"],
+    b: ["Ich", "Lilly", "Toffee", "Die Kanzlerin der Herzen", "Die Doppelspitze", "Mein Hund"],
     c: ["bleibt flauschig.", "will nur Käse.", "wedelt trotzdem.", "legt sich einfach hin.", "liegt im Umfragehoch.", "fordert Leckerli-Grundeinkommen.", "jagt Eichhörnchen.", "macht Zoomies.", "vertagt alles auf nach dem Nickerchen."]
   },
 
@@ -147,19 +160,20 @@ window.LILLY = {
   poll: {
     question: "Wenn am Sonntag Gassi-Wahl wäre …",
     options: [
-      { id: "lilly",  label: "Lilly als Kanzlerin",            base: 612 },
-      { id: "nap",    label: "Erst mal ein Nickerchen",          base: 233 },
-      { id: "sofa",   label: "Große Koalition: Sofa + Decke",    base: 154 },
-      { id: "cheese", label: "Weiß nicht, hab Käse gesehen",     base: 81 }
+      { id: "lilly",  label: "Lilly als Kanzlerin",                  base: 498 },
+      { id: "toffee", label: "Toffee (Wahlversprechen: Chaos)",      base: 287 },
+      { id: "nap",    label: "Erst mal ein Nickerchen",              base: 151 },
+      { id: "sofa",   label: "Große Koalition: Sofa + Decke",        base: 92 },
+      { id: "cheese", label: "Weiß nicht, hab Käse gesehen",         base: 52 }
     ],
-    footnote: "Befragt: 1.080 Hunde und 3 Katzen (ungültig). Fehlertoleranz ± 1 Leckerli."
+    footnote: "Befragt: 1.080 Hunde und 3 Katzen (ungültig). Toffee hat zweimal abgestimmt. Fehlertoleranz ± 1 Leckerli."
   },
 
   reviews: [
     { name: "Jana & Bruno", dog: "Labrador", text: "Mein Nachbar hat beim Gassi so gelacht, dass er seinen eigenen Hund vergessen hat.", stars: 5 },
     { name: "Mehmet & Luna", dog: "Golden Retriever", text: "Seit ich das Rücktritt-Hoodie trage, legen sich im Büro alle hin. Produktivität: egal. Stimmung: top.", stars: 5 },
     { name: "Sabine & Paul", dog: "Dackel", text: "Das Wahlplakat hängt im Flur. Mein Mann hat schon zweimal unterschrieben.", stars: 5 },
-    { name: "Tom & Kiwi", dog: "Mischling", text: "Kiwi trägt jetzt das Bandana und ist offiziell arroganter als ich. Danke für nichts.", stars: 5 }
+    { name: "Tom & Kiwi", dog: "Mischling", text: "Kiwi trägt jetzt das „Toffee war's“-Bandana. Seitdem war Kiwi nie mehr schuld. Genial.", stars: 5 }
   ]
 };
 
