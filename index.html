@@ -1,0 +1,373 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Growatt Komplettanlagen – aussuchen & reservieren</title>
+  <meta name="description" content="Photovoltaik-Komplettanlagen ausschließlich mit Growatt-Komponenten: Wechselrichter, Speicher, Wallbox. Paket aussuchen und kostenlos reservieren." />
+  <meta name="theme-color" content="#06080b" />
+  <meta name="view-transition" content="same-origin" />
+  <link rel="preload" href="assets/fonts/inter.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="assets/fonts/bricolage.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='9' fill='%23b6f36b'/%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="assets/css/styles.css" />
+  <script>document.documentElement.classList.add("js")</script>
+</head>
+<body>
+  <a class="skip" href="#main">Zum Inhalt springen</a>
+
+  <div class="progress" aria-hidden="true"></div>
+  <div class="cursor" aria-hidden="true"><span></span></div>
+  <div class="grain" aria-hidden="true"></div>
+
+  <!-- Navigation ------------------------------------------------------- -->
+  <header class="nav" id="nav">
+    <a href="#top" class="brand" aria-label="Startseite">
+      <span class="brand__sun" aria-hidden="true"></span>
+      <span class="brand__name" data-company>Sonnenwerk</span>
+      <span class="brand__tag">Growatt Partner</span>
+    </a>
+    <nav class="nav__links" aria-label="Hauptnavigation">
+      <a href="#story">So funktioniert's</a>
+      <a href="#finder">Anlagen-Finder</a>
+      <a href="#pakete">Komplettanlagen</a>
+      <a href="#komponenten">Komponenten</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+    <div class="nav__actions">
+      <button class="icon-btn" id="openSaved" aria-label="Merkliste öffnen">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.6-9.2C.9 8.4 3 4.5 6.8 4.5c2.1 0 3.6 1.1 4.4 2.6.8-1.5 2.3-2.6 4.4-2.6 3.8 0 5.9 3.9 4.4 7.3C18.9 16.4 12 21 12 21z"/></svg>
+        <span class="count" id="savedCount" hidden>0</span>
+      </button>
+      <button class="btn btn--primary btn--sm magnetic" data-reserve>Reservieren</button>
+      <button class="burger" id="burger" aria-label="Menü" aria-expanded="false"><span></span><span></span></button>
+    </div>
+  </header>
+
+  <main id="main">
+    <!-- Hero ---------------------------------------------------------- -->
+    <section class="hero" id="top">
+      <div class="aurora" aria-hidden="true">
+        <span></span><span></span><span></span>
+      </div>
+      <div class="hero__grid" aria-hidden="true"></div>
+
+      <div class="hero__inner">
+        <p class="eyebrow reveal">
+          <span class="dot"></span> 100 % Growatt · Komplettanlagen für Ihr Zuhause
+        </p>
+        <h1 class="hero__title split" aria-label="Ihre Sonne. Ihr Strom. Komplett.">
+          Ihre Sonne. Ihr Strom. <em>Komplett.</em>
+        </h1>
+        <p class="hero__lead reveal" style="--d:.5s">
+          Photovoltaik, Speicher und Wallbox aus einer Hand – perfekt aufeinander abgestimmt.
+          Paket aussuchen, kostenlos reservieren, wir melden uns innerhalb von 48&nbsp;Stunden.
+        </p>
+        <div class="hero__cta reveal" style="--d:.65s">
+          <a href="#finder" class="btn btn--primary btn--lg magnetic">
+            Passende Anlage finden
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a>
+          <a href="#pakete" class="btn btn--ghost btn--lg magnetic">Alle Pakete ansehen</a>
+        </div>
+
+        <ul class="hero__stats reveal" style="--d:.8s">
+          <li><strong data-count="7">0</strong><span>Komplettpakete</span></li>
+          <li><strong data-count="82" data-suffix=" %">0</strong><span>bis zu Autarkie*</span></li>
+          <li><strong data-count="0" data-suffix=" €">0</strong><span>Reservierung</span></li>
+          <li><strong data-count="48" data-suffix=" h">0</strong><span>Rückmeldung</span></li>
+        </ul>
+      </div>
+
+      <div class="hero__orb" aria-hidden="true">
+        <div class="orb">
+          <div class="orb__core"></div>
+          <div class="orb__ring r1"></div>
+          <div class="orb__ring r2"></div>
+          <div class="orb__ring r3"></div>
+        </div>
+      </div>
+
+      <a href="#story" class="scroll-hint" aria-label="Weiter scrollen"><span></span></a>
+    </section>
+
+    <!-- Marquee -------------------------------------------------------- -->
+    <section class="marquee" aria-label="Komponenten im Sortiment">
+      <div class="marquee__track">
+        <span>MOD XH Hybrid</span><i></i><span>APX HV Speicher</span><i></i><span>ARK XH</span><i></i>
+        <span>THOR Wallbox</span><i></i><span>NOAH 2000</span><i></i><span>NEO 800M-X</span><i></i>
+        <span>ShinePhone App</span><i></i><span>MIN TL-XH</span><i></i><span>SPA BH-UP</span><i></i>
+      </div>
+    </section>
+
+    <!-- Scrollytelling -------------------------------------------------- -->
+    <section class="story" id="story">
+      <div class="section-head reveal">
+        <p class="eyebrow">So funktioniert's</p>
+        <h2>Ein System. <em>Perfekt</em> abgestimmt.</h2>
+      </div>
+
+      <div class="story__wrap">
+        <div class="story__sticky">
+          <div class="scene" id="scene" data-step="0">
+            <svg viewBox="0 0 600 480" role="img" aria-label="Illustration: Energiefluss vom Dach über Wechselrichter und Speicher ins Haus und zum E-Auto">
+              <defs>
+                <linearGradient id="gRoof" x1="0" x2="1">
+                  <stop offset="0" stop-color="#1f2a38"/><stop offset="1" stop-color="#121a24"/>
+                </linearGradient>
+                <linearGradient id="gPanel" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0" stop-color="#2b4e7a"/><stop offset="1" stop-color="#0f2140"/>
+                </linearGradient>
+                <radialGradient id="gSun">
+                  <stop offset="0" stop-color="#fff6c2"/><stop offset=".45" stop-color="#ffcf4a"/><stop offset="1" stop-color="#ff9d2a" stop-opacity="0"/>
+                </radialGradient>
+                <filter id="glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+              </defs>
+
+              <g class="s-sun"><circle cx="520" cy="70" r="70" fill="url(#gSun)"/><circle cx="520" cy="70" r="26" fill="#ffe27a"/></g>
+              <g class="s-rays"><path d="M470 110 L360 175 M490 125 L410 200 M455 95 L310 160"/></g>
+
+              <!-- Haus -->
+              <path class="s-house" d="M110 250 L300 130 L490 250 V420 H110 Z"/>
+              <path d="M90 262 L300 120 L510 262" fill="none" stroke="#2a3644" stroke-width="10" stroke-linecap="round"/>
+              <g class="s-panels">
+                <g transform="translate(310 158) rotate(33.5)">
+                  <rect x="0" y="0" width="42" height="26" rx="2"/><rect x="46" y="0" width="42" height="26" rx="2"/><rect x="92" y="0" width="42" height="26" rx="2"/>
+                  <rect x="0" y="30" width="42" height="26" rx="2"/><rect x="46" y="30" width="42" height="26" rx="2"/><rect x="92" y="30" width="42" height="26" rx="2"/>
+                </g>
+              </g>
+              <rect x="262" y="320" width="56" height="100" rx="4" fill="#0d131b"/>
+              <rect x="150" y="290" width="70" height="56" rx="4" class="s-window"/>
+              <rect x="380" y="290" width="70" height="56" rx="4" class="s-window"/>
+
+              <!-- Geräte -->
+              <g class="s-inverter" transform="translate(150 360)">
+                <rect width="44" height="52" rx="6"/><rect x="10" y="10" width="24" height="10" rx="2" class="scr"/>
+                <text x="22" y="-8" text-anchor="middle">Wechselrichter</text>
+              </g>
+              <g class="s-battery" transform="translate(206 352)">
+                <rect width="40" height="18" rx="4"/><rect y="21" width="40" height="18" rx="4"/><rect y="42" width="40" height="18" rx="4"/>
+                <rect class="lvl" x="4" y="4" width="20" height="4" rx="2"/>
+                <text x="20" y="-8" text-anchor="middle">Speicher</text>
+              </g>
+              <g class="s-wallbox" transform="translate(470 330)">
+                <rect width="24" height="40" rx="5"/><circle cx="12" cy="14" r="4" class="scr"/>
+                <text x="12" y="-8" text-anchor="middle">Wallbox</text>
+              </g>
+              <g class="s-car" transform="translate(500 380)">
+                <path d="M0 30 Q4 10 22 8 L58 6 Q74 6 82 22 L92 26 V40 H0 Z"/>
+                <circle cx="20" cy="40" r="9"/><circle cx="72" cy="40" r="9"/>
+              </g>
+              <g class="s-phone" transform="translate(40 300)">
+                <rect width="40" height="70" rx="8"/><rect x="5" y="10" width="30" height="46" rx="3" class="scr"/>
+                <path d="M10 46 L16 36 L22 40 L30 26" fill="none" stroke="#06080b" stroke-width="2.5"/>
+                <text x="20" y="-8" text-anchor="middle">App</text>
+              </g>
+
+              <!-- Energieflüsse -->
+              <path class="flow f1" d="M372 210 C340 270 240 300 172 360"/>
+              <path class="flow f2" d="M176 360 C180 330 222 330 226 352"/>
+              <path class="flow f3" d="M194 372 C240 360 270 300 300 300"/>
+              <path class="flow f4" d="M246 380 C330 380 420 360 470 350"/>
+              <path class="flow f5" d="M494 360 C510 370 520 375 530 382"/>
+              <path class="flow f6" d="M150 386 C110 380 90 360 80 340"/>
+            </svg>
+          </div>
+        </div>
+
+        <ol class="story__steps">
+          <li class="step" data-step="1">
+            <span class="step__num">01</span>
+            <h3>Erzeugen</h3>
+            <p>Hochleistungsmodule auf Ihrem Dach wandeln Sonnenlicht in Gleichstrom – auch bei diffusem Licht.</p>
+          </li>
+          <li class="step" data-step="2">
+            <span class="step__num">02</span>
+            <h3>Wandeln</h3>
+            <p>Der Growatt Hybrid-Wechselrichter der MOD-XH-Serie macht daraus Haushaltsstrom und steuert alle Energieflüsse intelligent.</p>
+          </li>
+          <li class="step" data-step="3">
+            <span class="step__num">03</span>
+            <h3>Speichern</h3>
+            <p>Überschüsse landen im APX- oder ARK-Hochvoltspeicher mit sicheren LFP-Zellen – für Abend und Nacht.</p>
+          </li>
+          <li class="step" data-step="4">
+            <span class="step__num">04</span>
+            <h3>Nutzen & Laden</h3>
+            <p>Ihr Haus und Ihr E-Auto laufen mit eigenem Strom. Die THOR-Wallbox lädt bevorzugt mit Sonnenüberschuss.</p>
+          </li>
+          <li class="step" data-step="5">
+            <span class="step__num">05</span>
+            <h3>Im Blick behalten</h3>
+            <p>Mit der ShinePhone-App sehen Sie Erzeugung, Verbrauch und Speicherstand live – überall.</p>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- Finder ---------------------------------------------------------- -->
+    <section class="finder" id="finder">
+      <div class="section-head reveal">
+        <p class="eyebrow">Anlagen-Finder</p>
+        <h2>In 30 Sekunden zur <em>passenden</em> Anlage.</h2>
+        <p class="section-lead">Vier kurze Fragen – wir empfehlen Ihnen das Paket, das zu Ihrem Haushalt passt.</p>
+      </div>
+
+      <div class="finder__card reveal" id="finderCard">
+        <div class="finder__progress"><span id="finderBar"></span></div>
+        <form id="finderForm" novalidate>
+          <fieldset class="q is-active" data-q="0">
+            <legend>Wie wohnen Sie?</legend>
+            <div class="choices">
+              <label class="choice"><input type="radio" name="home" value="haus" /><span><b>🏡</b>Einfamilienhaus</span></label>
+              <label class="choice"><input type="radio" name="home" value="wohnung" /><span><b>🏢</b>Wohnung / Balkon</span></label>
+            </div>
+          </fieldset>
+          <fieldset class="q" data-q="1">
+            <legend>Haben Sie bereits eine PV-Anlage?</legend>
+            <div class="choices">
+              <label class="choice"><input type="radio" name="pv" value="nein" /><span><b>✨</b>Nein, neu</span></label>
+              <label class="choice"><input type="radio" name="pv" value="ja" /><span><b>🔋</b>Ja – Speicher nachrüsten</span></label>
+            </div>
+          </fieldset>
+          <fieldset class="q" data-q="2">
+            <legend>Fährt bei Ihnen (bald) ein E-Auto?</legend>
+            <div class="choices">
+              <label class="choice"><input type="radio" name="ev" value="ja" /><span><b>⚡</b>Ja</span></label>
+              <label class="choice"><input type="radio" name="ev" value="geplant" /><span><b>🗓️</b>Geplant</span></label>
+              <label class="choice"><input type="radio" name="ev" value="nein" /><span><b>🚲</b>Nein</span></label>
+            </div>
+          </fieldset>
+          <fieldset class="q" data-q="3">
+            <legend>Wie hoch ist Ihr Jahresverbrauch?</legend>
+            <div class="range">
+              <output id="consOut">4.500 kWh</output>
+              <input type="range" id="cons" name="cons" min="1500" max="12000" step="250" value="4500" />
+              <div class="range__scale"><span>1.500</span><span>12.000 kWh</span></div>
+              <p class="hint">Faustregel: ca. 1.500 kWh pro Person + 2.000 kWh pro E-Auto.</p>
+            </div>
+            <button type="submit" class="btn btn--primary btn--lg magnetic">Empfehlung anzeigen</button>
+          </fieldset>
+          <div class="q q--result" data-q="4" id="finderResult" aria-live="polite"></div>
+        </form>
+        <div class="finder__nav">
+          <button class="btn btn--text" id="finderBack" type="button" hidden>← Zurück</button>
+          <span class="finder__step" id="finderStep">Frage 1 von 4</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Pakete ---------------------------------------------------------- -->
+    <section class="packages" id="pakete">
+      <div class="section-head reveal">
+        <p class="eyebrow">Komplettanlagen</p>
+        <h2>Aussuchen. Vergleichen. <em>Reservieren.</em></h2>
+        <p class="section-lead">Jedes Paket besteht ausschließlich aus aufeinander abgestimmten Growatt-Komponenten – inklusive Planung, Montage und Inbetriebnahme.</p>
+      </div>
+
+      <div class="toolbar reveal">
+        <div class="chips" role="tablist" aria-label="Kategorie filtern" id="chips"></div>
+        <label class="select">
+          <span class="sr">Sortieren</span>
+          <select id="sort">
+            <option value="reco">Empfohlen</option>
+            <option value="price-asc">Preis aufsteigend</option>
+            <option value="price-desc">Preis absteigend</option>
+            <option value="kwp-desc">Leistung</option>
+            <option value="storage-desc">Speicher</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="grid" id="grid" aria-live="polite"></div>
+      <p class="fineprint">* Alle Preise sind unverbindliche Richtpreise inkl. 0&nbsp;% MwSt. nach §&nbsp;12 Abs.&nbsp;3 UStG. Autarkie- und Ertragswerte sind Schätzungen und hängen von Standort, Ausrichtung und Verbrauchsprofil ab. Der finale Preis wird nach dem kostenlosen Vor-Ort-Check verbindlich angeboten.</p>
+    </section>
+
+    <!-- Komponenten ------------------------------------------------------ -->
+    <section class="components" id="komponenten">
+      <div class="section-head reveal">
+        <p class="eyebrow">Komponenten</p>
+        <h2>Nur Growatt. <em>Ohne Kompromisse.</em></h2>
+        <p class="section-lead">Ein Hersteller, eine App, ein Ansprechpartner. Diese Komponenten stecken in unseren Paketen.</p>
+      </div>
+      <div class="rail" id="rail" tabindex="0" aria-label="Komponenten, horizontal scrollbar"></div>
+      <div class="rail__ctrl">
+        <button class="icon-btn" data-rail="-1" aria-label="Zurück"><svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg></button>
+        <button class="icon-btn" data-rail="1" aria-label="Weiter"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button>
+      </div>
+    </section>
+
+    <!-- Ablauf ---------------------------------------------------------- -->
+    <section class="process" id="ablauf">
+      <div class="section-head reveal">
+        <p class="eyebrow">Ablauf</p>
+        <h2>Von der Reservierung zum <em>eigenen Strom.</em></h2>
+      </div>
+      <ol class="timeline" id="timeline">
+        <li class="reveal"><span class="t-ico">01</span><h3>Aussuchen & reservieren</h3><p>Wählen Sie Ihr Paket und reservieren Sie es kostenlos – ganz ohne Zahlung.</p></li>
+        <li class="reveal"><span class="t-ico">02</span><h3>Persönliche Beratung</h3><p>Innerhalb von 48 Stunden melden wir uns zu Ihrem Wunschtermin.</p></li>
+        <li class="reveal"><span class="t-ico">03</span><h3>Vor-Ort-Check</h3><p>Wir prüfen Dach, Zählerschrank und Verbrauch und erstellen ein verbindliches Angebot.</p></li>
+        <li class="reveal"><span class="t-ico">04</span><h3>Montage & Inbetriebnahme</h3><p>Unser Team installiert alles in der Regel in 1–2 Tagen und übernimmt die Anmeldung.</p></li>
+      </ol>
+    </section>
+
+    <!-- FAQ -------------------------------------------------------------- -->
+    <section class="faq" id="faq">
+      <div class="section-head reveal">
+        <p class="eyebrow">FAQ</p>
+        <h2>Gut zu <em>wissen.</em></h2>
+      </div>
+      <div class="faq__list">
+        <details class="reveal" name="faq"><summary>Kostet die Reservierung etwas?</summary><div><p>Nein. Die Reservierung ist kostenlos und unverbindlich. Sie sichern sich damit Ihr Paket und einen Beratungstermin – bezahlt wird erst nach verbindlichem Angebot.</p></div></details>
+        <details class="reveal" name="faq"><summary>Warum ausschließlich Growatt?</summary><div><p>Wenn Wechselrichter, Speicher, Wallbox und Monitoring vom selben Hersteller stammen, sind sie optimal aufeinander abgestimmt. Sie haben eine App für alles und einen klaren Ansprechpartner bei Garantiefragen.</p></div></details>
+        <details class="reveal" name="faq"><summary>Kann ich den Speicher später erweitern?</summary><div><p>Ja. Die APX-HV- und ARK-XH-Speicher sind modular aufgebaut und lassen sich in festen Schritten erweitern – der NOAH 2000 für Balkonkraftwerke ebenfalls.</p></div></details>
+        <details class="reveal" name="faq"><summary>Wie hoch ist die Mehrwertsteuer?</summary><div><p>Für Photovoltaikanlagen bis 30 kWp auf oder an Wohngebäuden gilt in Deutschland der Nullsteuersatz (0&nbsp;% MwSt.) – inklusive Speicher und Montage.</p></div></details>
+        <details class="reveal" name="faq"><summary>Was passiert nach meiner Reservierung?</summary><div><p>Sie erhalten eine Reservierungsnummer. Wir melden uns innerhalb von 48 Stunden, besprechen Ihre Wünsche und vereinbaren einen Vor-Ort-Termin.</p></div></details>
+      </div>
+    </section>
+
+    <!-- CTA --------------------------------------------------------------- -->
+    <section class="cta">
+      <div class="cta__card reveal">
+        <div class="aurora aurora--small" aria-hidden="true"><span></span><span></span><span></span></div>
+        <h2>Bereit für Ihren <em>eigenen Strom?</em></h2>
+        <p>Reservieren Sie jetzt Ihr Wunschpaket – kostenlos und unverbindlich.</p>
+        <button class="btn btn--primary btn--lg magnetic" data-reserve>Jetzt reservieren</button>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer__top">
+      <div>
+        <a href="#top" class="brand"><span class="brand__sun" aria-hidden="true"></span><span class="brand__name" data-company>Sonnenwerk</span></a>
+        <p class="muted">Ihr Fachbetrieb für Growatt-Komplettanlagen.</p>
+      </div>
+      <div class="footer__cols">
+        <div><h4>Kontakt</h4><a data-phone href="#">Telefon</a><a data-email href="#">E-Mail</a></div>
+        <div><h4>Rechtliches</h4><a href="#">Impressum</a><a href="#">Datenschutz</a></div>
+      </div>
+    </div>
+    <p class="footer__legal muted">Unabhängiger Fachhändler. Growatt ist eine Marke der Shenzhen Growatt New Energy Co., Ltd. Produktabbildungen sind stilisierte Darstellungen. © <span id="year"></span> <span data-company>Sonnenwerk</span></p>
+  </footer>
+
+  <!-- Vergleichsleiste -------------------------------------------------- -->
+  <div class="compare-bar" id="compareBar" hidden>
+    <div class="compare-bar__items" id="compareItems"></div>
+    <button class="btn btn--primary btn--sm" id="openCompare">Vergleichen</button>
+    <button class="btn btn--text btn--sm" id="clearCompare">Leeren</button>
+  </div>
+
+  <!-- Dialoge ------------------------------------------------------------ -->
+  <dialog class="sheet" id="detail" aria-labelledby="detailTitle"></dialog>
+  <dialog class="sheet sheet--wide" id="compare" aria-label="Paketvergleich"></dialog>
+  <dialog class="sheet sheet--side" id="saved" aria-label="Merkliste"></dialog>
+  <dialog class="sheet sheet--form" id="reserve" aria-labelledby="reserveTitle"></dialog>
+
+  <div class="toasts" id="toasts" aria-live="polite"></div>
+  <canvas id="confetti" aria-hidden="true"></canvas>
+
+  <script src="assets/js/data.js"></script>
+  <script src="assets/js/app.js"></script>
+</body>
+</html>
