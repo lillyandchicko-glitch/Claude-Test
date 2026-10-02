@@ -16,7 +16,7 @@
   const priceOf = (type, photo) => D.types[type].price + (hasPic(photo) ? D.photoSurcharge : 0);
 
   // Bühnenfarbe hinter dem Produkt (Kontrast zur Stofffarbe)
-  const STAGE = { cream: "#ffb81c", red: "#ffd8a8", mustard: "#e8361e", ink: "#ff9ec7", sky: "#fff1dc", forest: "#ffb81c" };
+  const STAGE = { cream: "#f4b61a", red: "#ffd8a8", mustard: "#c8161d", ink: "#ff9ec7", sky: "#f6f0e4", forest: "#f4b61a" };
 
   if (hasGsap) gsap.registerPlugin(ScrollTrigger);
   else document.documentElement.classList.add("no-anim");
@@ -77,7 +77,7 @@
     const ctx = cv.getContext("2d");
     let parts = [];
     let running = false;
-    const colors = ["#e8361e", "#ffb81c", "#ff9ec7", "#9fd3ff", "#1b0f0a"];
+    const colors = ["#c8161d", "#f4b61a", "#ff9ec7", "#9fd3ff", "#1b0f0a"];
     function resize() { cv.width = innerWidth * devicePixelRatio; cv.height = innerHeight * devicePixelRatio; }
     addEventListener("resize", resize);
     resize();

@@ -60,12 +60,12 @@ window.LILLY = {
 
   // Stofffarbe → Stoff + Druckfarbe
   colors: {
-    cream:   { label: "Creme",        fabric: "#fff1dc", ink: "#e8361e" },
-    red:     { label: "Ketchup",      fabric: "#e8361e", ink: "#fff1dc" },
-    mustard: { label: "Senf",         fabric: "#ffb81c", ink: "#1b0f0a" },
-    ink:     { label: "Nachtschwarz", fabric: "#1b0f0a", ink: "#ffb81c" },
+    cream:   { label: "Creme",        fabric: "#f6f0e4", ink: "#c8161d" },
+    red:     { label: "Ketchup",      fabric: "#c8161d", ink: "#f6f0e4" },
+    mustard: { label: "Senf",         fabric: "#f4b61a", ink: "#1b0f0a" },
+    ink:     { label: "Nachtschwarz", fabric: "#1b0f0a", ink: "#f4b61a" },
     sky:     { label: "Himmelblau",   fabric: "#9fd3ff", ink: "#1b0f0a" },
-    forest:  { label: "Waldgrün",     fabric: "#1f4d3a", ink: "#fff1dc" }
+    forest:  { label: "Waldgrün",     fabric: "#1f4d3a", ink: "#f6f0e4" }
   },
 
   categories: [

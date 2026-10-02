@@ -3,26 +3,33 @@
    Farbwelt: Ketchup-Rot, Senfgelb, Creme, Röstbraun (Burger-Shop-Optik)
    ===================================================================== */
 
-@font-face { font-family: "Bagel"; src: url("../fonts/bagel.woff2") format("woff2"); font-display: swap; }
+@font-face { font-family: "Mouse Memoirs"; src: url("../fonts/mouse-memoirs.woff2") format("woff2"); font-display: swap; }
+@font-face { font-family: "Luckiest Guy"; src: url("../fonts/luckiest-guy.woff2") format("woff2"); font-display: swap; }
 @font-face { font-family: "DM Sans"; src: url("../fonts/dmsans-400.woff2") format("woff2"); font-weight: 400; font-display: swap; }
 @font-face { font-family: "DM Sans"; src: url("../fonts/dmsans-500.woff2") format("woff2"); font-weight: 500; font-display: swap; }
 @font-face { font-family: "DM Sans"; src: url("../fonts/dmsans-700.woff2") format("woff2"); font-weight: 700; font-display: swap; }
-@font-face { font-family: "Marker"; src: url("../fonts/marker.woff2") format("woff2"); font-display: swap; }
 
 :root {
-  --red: #e8361e;
-  --red-deep: #b9240f;
-  --mustard: #ffb81c;
-  --cream: #fff1dc;
-  --cream-2: #f9e2c0;
+  /* Farben nach CRAV: Ketchup-Rot, Senf, Papier-Beige */
+  --red: #c8161d;
+  --red-deep: #9b0f14;
+  --mustard: #f4b61a;
+  --cream: #f8f3ea;
+  --cream-2: #ece5d8;
+  --paper: #e8e1d4;
   --ink: #1b0f0a;
   --brown: #3a1f12;
   --sky: #9fd3ff;
   --pink: #ff9ec7;
 
-  --display: "Bagel", "Arial Black", system-ui, sans-serif;
+  --display: "Mouse Memoirs", "Arial Narrow", system-ui, sans-serif;
+  --badge: "Luckiest Guy", "Arial Black", system-ui, sans-serif;
   --body: "DM Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
-  --hand: "Marker", "Comic Sans MS", cursive;
+  --hand: "Mouse Memoirs", "Arial Narrow", system-ui, sans-serif;
+  /* Mouse Memoirs ist dünn: per Kontur in Textfarbe fetter machen (wie das Original) */
+  --thick: .035em;
+  /* weiße Aufkleber-Kontur + Schatten */
+  --sticker: drop-shadow(.045em 0 0 #fff) drop-shadow(-.045em 0 0 #fff) drop-shadow(0 .045em 0 #fff) drop-shadow(0 -.045em 0 #fff) drop-shadow(0 .035em .02em rgba(27,15,10,.28));
 
   --radius: 28px;
   --gutter: clamp(16px, 4vw, 56px);
@@ -1244,3 +1251,110 @@ img.is-broken { object-fit: contain !important; }
   background: var(--cream); font-family: var(--display);
 }
 .studio__orig img { object-fit: cover; }
+
+
+/* =====================================================================
+   CRAV-Look: Mouse Memoirs (fett gemacht) + Luckiest Guy für Labels,
+   Aufkleber-Kontur, Papier-Hintergrund
+   ===================================================================== */
+body { background-color: var(--paper); }
+.grain { opacity: .09; }
+
+/* Alles in der Display-Schrift etwas fetter */
+.section-title, .hero__title, .btn, .logo__word, .cart-btn, .card__title, .card__price, .card__badge,
+.print__top, .pdp__title, .pdp__price, .cart__head h3, .cart__item h4, .cart__price, .cart__sum strong,
+.manifest__text, .manifest__stats strong, .marquee__track span, .loader__count, .sticker--two,
+.insta__title, .footer__big, .reel__strip div, .poll__q, .poll__pct, .scan__text, .drop strong,
+.studio__steps li, .studio__buy strong, .review figcaption, .qty output, .fetch-btn, .tapper__hint,
+.tapper__done, .nav__links a, .pill, .studio__demo, .loader__text, .polaroid figcaption, .news__ok,
+.pdp__sub, .cart__empty, .print__sub, .hero__lede {
+  -webkit-text-stroke: var(--thick) currentColor;
+}
+.nav__links a, .pill, .hero__lede { --thick: .012em; }
+
+/* Großbuchstaben wie im Original */
+.section-title, .hero__title, .btn, .logo__word, .cart-btn, .pdp__title, .footer__big, .insta__title,
+.studio__steps li, .drop strong, .scan__text, .fetch-btn, .tapper__hint, .card__badge, .marquee__track span {
+  text-transform: uppercase;
+}
+.section-title { letter-spacing: 0; line-height: .86; }
+.btn { font-size: 1.35rem; letter-spacing: .02em; padding: .7em 1.5em; }
+.btn--big { font-size: clamp(1.4rem, 2.4vw, 1.9rem); }
+.cart-btn { font-size: 1.3rem; }
+.logo__word { font-size: 2.6rem; letter-spacing: .01em; }
+.nav__links a { font-family: var(--display); font-size: 1.35rem; font-weight: 400; text-transform: uppercase; letter-spacing: .02em; }
+.pill { font-family: var(--display); font-weight: 400; font-size: 1.2rem; letter-spacing: .02em; }
+.pill--small { font-size: 1.08rem; }
+.card__title { font-size: 1.45rem; line-height: 1; }
+.card__price { font-size: 1.5rem; }
+.card__badge { font-family: var(--badge); font-size: .78rem; -webkit-text-stroke: 0; letter-spacing: .02em; }
+.pdp__title { font-size: clamp(2.2rem, 4vw, 3.4rem); line-height: .92; }
+.pdp__price, .cart__sum strong, .studio__buy strong { font-size: 2.4rem; }
+.cart__head h3 { font-size: 2.2rem; }
+.cart__item h4 { font-size: 1.2rem; line-height: 1; }
+.cart__price { font-size: 1.25rem; }
+.manifest__text { font-size: clamp(2.3rem, 5.6vw, 5.4rem); line-height: 1; }
+.manifest__stats strong { font-size: clamp(3.6rem, 8.5vw, 7rem); }
+.marquee__track span { font-size: clamp(2rem, 5vw, 3.8rem); }
+.reel__strip div { font-size: clamp(1.3rem, 2.8vw, 2rem); }
+.poll__q { font-size: clamp(1.6rem, 3vw, 2.5rem); }
+.poll__pct { font-size: 1.8rem; }
+.scan__text, .drop strong { font-size: clamp(1.7rem, 3vw, 2.4rem); }
+.studio__steps li { font-size: 1.45rem; }
+.review figcaption { font-size: 1.35rem; }
+.qty output { font-size: 1.4rem; }
+.fetch-btn { font-size: 1.25rem; }
+.insta__title { font-size: clamp(2.6rem, 5.6vw, 6rem); line-height: .9; }
+.footer__big { font-size: 40vw; line-height: .75; letter-spacing: 0; }
+.loader__text { font-size: 2rem; }
+.polaroid figcaption { font-size: 1.45rem; line-height: 1.05; }
+.pdp__sub, .news__ok, .cart__empty { font-size: 1.5rem; }
+.studio__demo { font-size: 1.45rem; }
+.hero__lede { font-family: var(--hand); font-size: 1.45rem; line-height: 1.15; }
+.automat__intro p:last-child, .studio__lede, .shop__sub, .news > p, .gallery__head p:last-child, .poll__note {
+  font-family: var(--hand); font-size: 1.45rem; line-height: 1.15; -webkit-text-stroke: .01em currentColor;
+}
+.shop__sub, .gallery__head p:last-child { font-size: 1.55rem; }
+
+/* Labels wie „TOP CLASSIC“: Luckiest Guy mit weißem Rand */
+.eyebrow {
+  font-family: var(--badge);
+  font-size: clamp(1rem, 1.6vw, 1.3rem);
+  letter-spacing: .02em;
+  text-transform: uppercase;
+  color: var(--red);
+  filter: drop-shadow(2px 0 0 #fff) drop-shadow(-2px 0 0 #fff) drop-shadow(0 2px 0 #fff) drop-shadow(0 -2px 0 #fff) drop-shadow(0 2px 2px rgba(27,15,10,.3));
+  transform: rotate(-3deg);
+  margin-bottom: .9rem;
+}
+.eyebrow--light {
+  color: var(--mustard);
+  filter: drop-shadow(2px 0 0 var(--ink)) drop-shadow(-2px 0 0 var(--ink)) drop-shadow(0 2px 0 var(--ink)) drop-shadow(0 -2px 0 var(--ink)) drop-shadow(0 3px 0 rgba(27,15,10,.4));
+}
+
+/* Rote Aufkleber-Überschriften auf hellem Grund */
+.section-title:not(.section-title--light), .shop__head .section-title, .news .section-title, .poll .section-title, .reviews .section-title {
+  color: var(--red);
+  filter: var(--sticker);
+}
+.gallery .section-title { color: var(--red); }
+.section-title--light { filter: drop-shadow(0 .04em 0 rgba(27,15,10,.35)); }
+
+/* ---------- Hero im CRAV-Stil: Papier, rote Aufkleber-Schrift ---------- */
+.hero { background: var(--paper); color: var(--ink); }
+.hero__bg::before { background: repeating-conic-gradient(from 0deg at 50% 70%, rgba(200,22,29,.07) 0 7.5deg, transparent 7.5deg 15deg); }
+.hero__sun { background: var(--mustard); box-shadow: 0 0 0 28px rgba(244,182,26,.22), 0 0 0 70px rgba(244,182,26,.1); }
+.hero__title { color: var(--red); font-size: clamp(4.4rem, 14vw, 15.5rem); line-height: .82; filter: var(--sticker); }
+.hero__title .line--outline { color: var(--red); -webkit-text-stroke: var(--thick) var(--red); }
+.hero__title .char { -webkit-text-stroke: var(--thick) var(--red); }
+.sticker--one text { font-family: var(--badge); font-size: 18px; letter-spacing: 1px; }
+.sticker--two { font-family: var(--badge); color: var(--red); font-size: clamp(1rem, 1.8vw, 1.5rem); line-height: 1.05; -webkit-text-stroke: 0; }
+.scroll-hint { color: var(--ink); }
+
+/* Footer: rote Riesenschrift */
+.footer__big { color: var(--red); }
+
+/* Mockup-Druck: Mouse Memoirs fett, wie ein Siebdruck */
+.print__top { -webkit-text-stroke: .045em currentColor; line-height: .92; text-transform: uppercase; }
+.mock--poster .print__top { line-height: .9; }
+.print__sub { -webkit-text-stroke: .02em currentColor; font-size: 3cqw; }

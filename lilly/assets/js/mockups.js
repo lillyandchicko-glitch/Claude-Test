@@ -90,7 +90,8 @@
   function fit(text, width) {
     const len = Math.max(8, text.length);
     const longest = Math.max(...text.split(/\s+/).map((w) => w.length));
-    return Math.min(9.5, (width * 1.6) / longest, Math.max(2.4, (width * 2.1) / Math.pow(len, 0.78)));
+    // Mouse Memoirs in Großbuchstaben ist schmal → größere Schrift möglich
+    return Math.min(13, (width * 2.25) / longest, Math.max(3.2, (width * 2.9) / Math.pow(len, 0.78)));
   }
 
   window.mockup = function (type, colorKey, top, sub, photo) {

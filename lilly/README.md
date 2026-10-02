@@ -34,6 +34,10 @@ python3 -m http.server 8000
 
 `prefers-reduced-motion` wird respektiert, Dialoge sind native `<dialog>`-Elemente, alles ist per Tastatur bedienbar. Ohne JavaScript bleibt der Inhalt sichtbar.
 
+## Schrift & Farben
+
+Angelehnt an cravburgers.shop: **Mouse Memoirs** (schmale, handgezeichnete Großbuchstaben, per Kontur fetter gemacht) für Überschriften und Fließtext-Akzente, **Luckiest Guy** für kleine Labels mit weißem Rand, **DM Sans** für Formulare. Alle drei sind freie Google-Fonts (SIL OFL) und liegen lokal in `assets/fonts/`. Rote Überschriften bekommen eine weiße Aufkleber-Kontur (`--sticker`), der Hintergrund ist Papier-Beige.
+
 ## Anpassen
 
 Alle Inhalte stehen in `assets/js/data.js`:
