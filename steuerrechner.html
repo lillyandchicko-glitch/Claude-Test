@@ -1,0 +1,934 @@
+<title>Steuerplaner Daniel &amp; Claudia</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: Formular-Werkbank — Kopf mit Kennzahlen, Reiter, je Reiter Eingaben links / Ergebnisse rechts */
+:root{
+  --bg:#EEF2F0; --panel:#FFFFFF; --field:#F7FAF8; --ink:#17211E; --muted:#5A6863; --line:#D3DCD8;
+  --accent:#1D4E89; --accent-soft:#E1EAF5; --pos:#1B7547; --pos-soft:#DFF1E6; --neg:#AE372B; --neg-soft:#F7E2DE; --warn:#8A5A00; --warn-soft:#F8EDD5;
+  --f-display:"IBM Plex Sans Condensed","Arial Narrow",Arial,sans-serif;
+  --f-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-num:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0F1513; --panel:#161E1B; --field:#111916; --ink:#E4EBE8; --muted:#97A6A0; --line:#29352F;
+  --accent:#86AEE3; --accent-soft:#1B2738; --pos:#62C690; --pos-soft:#15301F; --neg:#F0887B; --neg-soft:#3A1D19; --warn:#E5B85C; --warn-soft:#33280F; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0F1513; --panel:#161E1B; --field:#111916; --ink:#E4EBE8; --muted:#97A6A0; --line:#29352F;
+  --accent:#86AEE3; --accent-soft:#1B2738; --pos:#62C690; --pos-soft:#15301F; --neg:#F0887B; --neg-soft:#3A1D19; --warn:#E5B85C; --warn-soft:#33280F; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.5}
+.wrap{max-width:1240px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;letter-spacing:.005em}
+h1{font-size:clamp(1.6rem,3.4vw,2.3rem);font-weight:700}
+h2{font-size:1.35rem;font-weight:600}
+h3{font-size:1.05rem;font-weight:600}
+.num,td.n,th.n{font-family:var(--f-num);font-variant-numeric:tabular-nums}
+header.top{padding-block:22px 14px}
+.sub{color:var(--muted);margin:4px 0 0;max-width:70ch}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-top:16px}
+.kpi{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:12px 14px;min-width:0}
+.kpi .l{font-size:.75rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+.kpi .v{font-family:var(--f-num);font-size:1.35rem;font-weight:500;margin-top:2px}
+.kpi .s{font-size:.8rem;color:var(--muted)}
+.pos{color:var(--pos)} .neg{color:var(--neg)}
+nav.tabs{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);border-bottom:1px solid var(--line)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+nav.tabs .wrap{display:flex;gap:2px;overflow-x:auto;scrollbar-width:thin}
+nav.tabs a{flex:none;padding:11px 12px 9px;color:var(--muted);text-decoration:none;font-weight:500;border-bottom:3px solid transparent;font-size:.93rem}
+nav.tabs a:hover{color:var(--ink)}
+nav.tabs a[aria-current="page"]{color:var(--accent);border-bottom-color:var(--accent)}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+main{padding-block:20px 60px}
+section.panel{display:none}
+section.panel.on{display:block}
+.cols{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:18px;align-items:start}
+@media (max-width:900px){.cols{grid-template-columns:minmax(0,1fr)}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:16px;min-width:0}
+.stack{display:flex;flex-direction:column;gap:16px;min-width:0}
+.card h3{margin-bottom:10px}
+.tag{display:inline-block;font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);background:var(--accent-soft);border-radius:4px;padding:1px 6px;margin-left:6px;vertical-align:2px;font-family:var(--f-body);font-weight:600}
+.fields{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px 12px}
+.fld{display:flex;flex-direction:column;gap:3px;min-width:0}
+.fld label{font-size:.82rem;color:var(--muted);line-height:1.3}
+.fld .in{display:flex;align-items:center;background:var(--field);border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.fld input,.fld select{flex:1;min-width:0;border:0;background:transparent;color:var(--ink);font:inherit;font-family:var(--f-num);padding:7px 8px;font-size:.92rem}
+.fld select{font-family:var(--f-body)}
+.fld .u{font-size:.75rem;color:var(--muted);padding-right:8px;white-space:nowrap}
+.fld .h{font-size:.74rem;color:var(--muted)}
+.fld.chk{flex-direction:row;align-items:flex-start;gap:8px;grid-column:1/-1}
+.fld.chk input{flex:none;width:18px;height:18px;margin:2px 0 0;accent-color:var(--accent)}
+.fld.chk label{color:var(--ink);font-size:.88rem}
+.tbl{overflow-x:auto;min-width:0}
+table{border-collapse:collapse;width:100%;font-size:.88rem}
+th,td{padding:6px 8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{font-weight:600;color:var(--muted);font-size:.78rem;text-transform:uppercase;letter-spacing:.05em}
+td.n,th.n{text-align:right;white-space:nowrap}
+tr.sum td{font-weight:600;border-top:2px solid var(--ink);border-bottom:none}
+tr.best td{background:var(--pos-soft)}
+#cmpTable td:first-child{min-width:190px}
+.pill{display:inline-block;padding:1px 8px;border-radius:999px;font-size:.75rem;font-weight:600}
+.pill.pos{background:var(--pos-soft);color:var(--pos)} .pill.neg{background:var(--neg-soft);color:var(--neg)} .pill.acc{background:var(--accent-soft);color:var(--accent)}
+.note{font-size:.84rem;color:var(--muted);margin:8px 0 0}
+.callout{border-left:3px solid var(--accent);background:var(--accent-soft);padding:10px 12px;border-radius:0 6px 6px 0;font-size:.88rem}
+.callout.warn{border-color:var(--warn);background:var(--warn-soft)}
+.callout.neg{border-color:var(--neg);background:var(--neg-soft)}
+.callout b{font-weight:600}
+ul.hints{margin:6px 0 0;padding-left:18px;font-size:.86rem;color:var(--muted)} ul.hints li{margin:3px 0}
+button{font:inherit;cursor:pointer;border-radius:6px;border:1px solid var(--line);background:var(--panel);color:var(--ink);padding:6px 12px}
+button.pri{background:var(--accent);border-color:var(--accent);color:var(--panel)}
+button.x{border:0;background:transparent;color:var(--muted);padding:2px 6px;font-size:1.1rem;line-height:1}
+.brow{display:grid;grid-template-columns:minmax(0,1fr) 110px 28px;gap:6px;align-items:center;padding:3px 0}
+.brow input{border:1px solid var(--line);background:var(--field);color:var(--ink);font:inherit;padding:5px 7px;border-radius:5px;min-width:0}
+.brow input.amt{font-family:var(--f-num);text-align:right}
+.brow.lock{color:var(--muted)} .brow.lock span.n{font-family:var(--f-num);text-align:right;padding-right:8px}
+.phase{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+@media (max-width:700px){.phase{grid-template-columns:minmax(0,1fr)}}
+.ph{border:1px solid var(--line);border-radius:8px;padding:12px;min-width:0;background:var(--field)}
+.ph .t{font-weight:600;font-family:var(--f-display);font-size:1rem}
+.ph .d{font-size:.78rem;color:var(--muted)}
+.ph dl{display:grid;grid-template-columns:1fr auto;gap:2px 8px;margin:8px 0 0;font-size:.84rem}
+.ph dt{color:var(--muted)} .ph dd{margin:0;font-family:var(--f-num);text-align:right}
+.ph dd.b,.ph dt.b{font-weight:600;color:var(--ink);border-top:1px solid var(--line);padding-top:3px}
+.bar{height:10px;border-radius:5px;background:var(--line);overflow:hidden;margin-top:8px;display:flex}
+.bar i{display:block;height:100%}
+.chart svg{width:100%;height:auto;display:block}
+.chart text{fill:var(--muted);font-family:var(--f-num);font-size:11px}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:.8rem;color:var(--muted);margin-top:6px}
+.legend i{display:inline-block;width:12px;height:3px;vertical-align:middle;margin-right:5px}
+.prog select{font:inherit;font-size:.8rem;border:1px solid var(--line);background:var(--field);color:var(--ink);border-radius:5px;padding:3px}
+.prog td:first-child{white-space:nowrap}
+.prog tr.grp td{font-family:var(--f-display);font-weight:600;color:var(--accent);padding-top:12px;border-bottom:none}
+.prog td.neg{color:var(--neg)} .prog td.pos{color:var(--pos)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+footer{color:var(--muted);font-size:.8rem;padding-block:0 30px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<header class="top"><div class="wrap">
+  <h1>Steuerplaner Daniel &amp; Claudia</h1>
+  <p class="sub">Steuerklassen, Erstattung oder Nachzahlung, Arbeitslosengeld, Abfindung, Haushalt, Auto, Haus und Sparen in einem Rechner. Alle Felder sind mit euren Zahlen vorbelegt und frei änderbar; Eingaben bleiben in diesem Browser gespeichert.</p>
+  <div class="kpis" id="kpis"></div>
+</div></header>
+
+<nav class="tabs" aria-label="Bereiche"><div class="wrap" id="tabnav">
+  <a href="#steuer">Steuerklassen &amp; Erstattung</a>
+  <a href="#einkommen">Einkommen &amp; Familie</a>
+  <a href="#absetzen">Absetzen</a>
+  <a href="#haushalt">Haushalt</a>
+  <a href="#auto">Auto</a>
+  <a href="#haus">Haus</a>
+  <a href="#abfindung">Abfindung</a>
+  <a href="#prognose">Prognose &amp; Sparen</a>
+  <a href="#annahmen">Annahmen</a>
+</div></nav>
+
+<main class="wrap">
+
+<!-- STEUER -->
+<section class="panel" id="p-steuer">
+  <div class="stack">
+    <div class="card">
+      <div class="row" style="justify-content:space-between">
+        <h2>Steuerklassen-Vergleich</h2>
+        <div class="fld" style="flex-direction:row;align-items:center;gap:8px"><label for="cmpYear">Steuerjahr</label><div class="in"><select id="cmpYear"></select></div></div>
+      </div>
+      <p class="note" id="cmpIntro"></p>
+      <div class="tbl" style="margin-top:10px"><table id="cmpTable"></table></div>
+      <div id="cmpVerdict" style="margin-top:12px"></div>
+    </div>
+    <div class="cols">
+      <div class="card"><h3>Steuerbescheid-Schätzung <span id="detYearLbl"></span></h3><div class="tbl"><table id="detTable"></table></div></div>
+      <div class="stack">
+        <div class="card"><h3>Was das für euch heißt</h3><div id="taxHints"></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EINKOMMEN -->
+<section class="panel" id="p-einkommen">
+  <div class="cols">
+    <div class="stack">
+      <div class="card"><h3>Daniel</h3><div class="fields" id="f-daniel"></div></div>
+      <div class="card"><h3>Claudia</h3><div class="fields" id="f-claudia"></div></div>
+    </div>
+    <div class="stack">
+      <div class="card"><h3>Kinder <span class="tag">Anlage Kind</span></h3><div class="fields" id="f-kinder"></div>
+        <p class="note">Kindergeld gibt es für volljährige Kinder bis 25, solange sie in Ausbildung oder Studium sind. Für David bitte als Ende den Monat eintragen, in dem er 25 wird oder das Studium endet.</p></div>
+      <div class="card"><h3>Kirchensteuer</h3><div class="fields" id="f-kirche"></div></div>
+      <div class="card"><h3>Monatlich netto (laut Steuerklassen der Prognose)</h3><div class="tbl"><table id="incomeTable"></table></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ABSETZEN -->
+<section class="panel" id="p-absetzen">
+  <div class="cols">
+    <div class="stack">
+      <div class="card"><h3>Daniel: Homeoffice &amp; Arbeitsweg <span class="tag">Anlage N</span></h3><div class="fields" id="f-wk1"></div></div>
+      <div class="card"><h3>Daniel: Dienstreisen <span class="tag">Anlage N</span></h3><div class="fields" id="f-wk2"></div></div>
+      <div class="card"><h3>Daniel: weitere Werbungskosten <span class="tag">Anlage N</span></h3><div class="fields" id="f-wk3"></div></div>
+      <div class="card"><h3>Claudia: Werbungskosten <span class="tag">Anlage N</span></h3><div class="fields" id="f-wkc"></div></div>
+      <div class="card"><h3>Sonderausgaben &amp; Steuerermäßigungen <span class="tag">Haushaltsnahe Aufwendungen</span></h3><div class="fields" id="f-sa"></div></div>
+    </div>
+    <div class="stack">
+      <div class="card"><h3>Was davon ankommt</h3><div class="tbl"><table id="wkTable"></table></div><div id="wkWarn"></div></div>
+      <div class="card"><h3>Höchstbeträge &amp; Pauschalen</h3>
+        <ul class="hints">
+          <li><b>Homeoffice-Pauschale:</b> 6 € je Tag, höchstens 210 Tage = 1.260 € im Jahr. Für einen Tag gibt es entweder Homeoffice-Pauschale oder Entfernungspauschale, nicht beides.</li>
+          <li><b>Entfernungspauschale:</b> ab 2026 einheitlich 0,38 € je Entfernungskilometer ab dem 1. km (einfache Strecke). Deckel 4.500 € im Jahr, außer mit eigenem oder überlassenem Pkw.</li>
+          <li><b>Car Allowance:</b> wird voll versteuert, deshalb darf Daniel die Fahrten trotzdem absetzen. Was der Arbeitgeber für Dienstreisen steuerfrei erstattet, wird abgezogen.</li>
+          <li><b>Dienstreisen mit eigenem Auto:</b> 0,30 € je gefahrenem km. Hotel und Flug in tatsächlicher Höhe (Hotelfrühstück abziehen).</li>
+          <li><b>Verpflegung:</b> 14 € ab 8 Stunden Abwesenheit und für An- und Abreisetag, 28 € für volle 24 Stunden (Inland).</li>
+          <li><b>Telefon/Internet:</b> ohne Einzelnachweis 20 % der Rechnung, höchstens 20 € im Monat (240 € im Jahr).</li>
+          <li><b>Arbeitnehmer-Pauschbetrag:</b> 1.230 € je Person. Erst was darüber liegt, senkt die Steuer.</li>
+          <li><b>Haushaltsnahe Dienstleistungen:</b> 20 % der Kosten, höchstens 4.000 € Steuerermäßigung. <b>Handwerker:</b> 20 % der Arbeitskosten, höchstens 1.200 €.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HAUSHALT -->
+<section class="panel" id="p-haushalt">
+  <div class="stack">
+    <div class="card">
+      <h2>Was im Monat übrig bleibt</h2>
+      <p class="note">Drei typische Monate: solange Claudia arbeitet, während des Arbeitslosengelds und danach. Daniels Netto ohne Provision und Aktien (die kommen einmal im Jahr, siehe Prognose).</p>
+      <div class="fields" id="f-hh" style="margin-top:10px"></div>
+      <div class="phase" id="phases" style="margin-top:12px"></div>
+    </div>
+    <div class="cols">
+      <div class="card">
+        <div class="row" style="justify-content:space-between"><h3>Haushaltskosten pro Monat</h3><button id="addItem" type="button">+ Position</button></div>
+        <p class="note" style="margin-top:0">Beispielwerte, bitte mit euren echten Beträgen überschreiben.</p>
+        <div id="budget" style="margin-top:8px"></div>
+      </div>
+      <div class="card"><h3>Verteilung im ALG-Monat</h3><div id="budgetBars"></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- AUTO -->
+<section class="panel" id="p-auto">
+  <div class="cols">
+    <div class="stack">
+      <div class="card"><h3>Finanzierung</h3><div class="fields" id="f-auto1"></div></div>
+      <div class="card"><h3>Laufende Kosten</h3><div class="fields" id="f-auto2"></div></div>
+    </div>
+    <div class="stack">
+      <div class="card"><h3>Ergebnis</h3><div class="tbl"><table id="autoTable"></table></div></div>
+      <div class="card"><h3>Restschuld Auto</h3><div class="chart" id="autoChart"></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- HAUS -->
+<section class="panel" id="p-haus">
+  <div class="cols">
+    <div class="stack">
+      <div class="card"><h3>Hausfinanzierung</h3><div class="fields" id="f-haus"></div>
+        <p class="note">Den Sollzins findet ihr im Darlehensvertrag oder Kontoauszug der Bank. Viele Verträge erlauben 5–10 % Sondertilgung pro Jahr ohne Vorfälligkeitsentschädigung.</p></div>
+    </div>
+    <div class="stack">
+      <div class="card"><h3>Wann ist das Haus abbezahlt?</h3><div id="hausResult"></div></div>
+      <div class="card"><h3>Restschuld</h3><div class="chart" id="hausChart"></div>
+        <div class="legend"><span><i style="background:var(--accent)"></i>mit Sondertilgung</span><span><i style="background:var(--muted)"></i>nur Monatsrate</span></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ABFINDUNG -->
+<section class="panel" id="p-abfindung">
+  <div class="cols">
+    <div class="stack">
+      <div class="card"><h3>Abfindung Lufthansa</h3><div class="fields" id="f-abf"></div>
+        <p class="note">Faustformel: Monatsbrutto × Betriebsjahre × Faktor. Sozialpläne und Tarifverträge für die Kabine können davon abweichen; tragt die Faktoren aus dem Angebot ein, sobald es vorliegt.</p></div>
+    </div>
+    <div class="stack">
+      <div class="card"><h3>Drei Größen im Vergleich</h3><div class="tbl"><table id="abfTable"></table></div><div id="abfNote"></div></div>
+      <div class="card"><h3>Darauf achten</h3>
+        <ul class="hints">
+          <li><b>Fünftelregelung:</b> Seit 2025 rechnet der Arbeitgeber sie nicht mehr beim Lohnsteuerabzug ein. Lufthansa behält also zuerst zu viel Lohnsteuer ein; der Vorteil kommt erst über die Steuererklärung zurück.</li>
+          <li><b>Keine Sozialabgaben:</b> Eine echte Abfindung ist sozialversicherungsfrei.</li>
+          <li><b>Arbeitslosengeld:</b> Die Abfindung wird nicht angerechnet, wenn die Kündigungsfrist eingehalten wird. Bei einem Aufhebungsvertrag droht eine Sperrzeit von bis zu 12 Wochen; vor dem Unterschreiben bei der Agentur für Arbeit oder einem Fachanwalt prüfen lassen.</li>
+          <li><b>Auszahlungsjahr:</b> In einem Jahr mit weniger Einkommen ist die Steuer auf die Abfindung niedriger. Vergleicht oben das Jahr der Auszahlung.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROGNOSE -->
+<section class="panel" id="p-prognose">
+  <div class="stack">
+    <div class="card prog">
+      <h2>Jahresprognose</h2>
+      <p class="note">Steuerklassen pro Jahr frei wählbar. Erstattung oder Nachzahlung entsteht im jeweiligen Jahr und kommt mit dem Bescheid im Folgejahr.</p>
+      <div class="tbl" style="margin-top:10px"><table id="progTable"></table></div>
+    </div>
+    <div class="cols">
+      <div class="card"><h3>Sparen</h3><div class="fields" id="f-spar"></div></div>
+      <div class="card"><h3>Sparvermögen zum Jahresende</h3><div class="chart" id="sparChart"></div><div id="sparNote"></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ANNAHMEN -->
+<section class="panel" id="p-annahmen">
+  <div class="cols">
+    <div class="card"><h3>Rechengrößen</h3><div class="fields" id="f-param"></div>
+      <div class="row" style="margin-top:14px"><button type="button" id="resetBtn">Alle Eingaben zurücksetzen</button><span id="resetMsg" class="note" style="margin:0"></span></div>
+    </div>
+    <div class="card"><h3>So wird gerechnet</h3>
+      <ul class="hints">
+        <li>Einkommensteuertarif 2026 (§ 32a EStG, Grundfreibetrag 12.348 €) mit Ehegattensplitting. Für 2027 und später sind noch keine Werte beschlossen; es werden die Werte von 2026 verwendet.</li>
+        <li>Lohnsteuer nach vereinfachtem Programmablaufplan: Arbeitnehmer-Pauschbetrag, Vorsorgepauschale, Steuerklasse V nach dem amtlichen Verfahren. Abweichungen zur Gehaltsabrechnung von einigen Euro im Monat sind normal.</li>
+        <li>Arbeitslosengeld: Brutto der letzten 12 Monate (bis Beitragsbemessungsgrenze) ÷ 365, minus 20 % Sozialversicherungspauschale, minus Lohnsteuer und Soli nach Claudias Steuerklasse, davon 67 % (mit Kind). Maßgeblich ist die Steuerklasse zu Beginn des Jahres, in dem der Anspruch entsteht. Ein späterer Wechsel zählt nur, wenn er das Arbeitslosengeld senkt.</li>
+        <li>Arbeitslosengeld ist steuerfrei, erhöht aber den Steuersatz auf das übrige Einkommen (Progressionsvorbehalt). Deshalb gibt es oft eine Nachzahlung und Pflicht zur Steuererklärung.</li>
+        <li>Kindergeld oder Kinderfreibetrag: Das Finanzamt prüft automatisch, was günstiger ist (Günstigerprüfung). Soli und Kirchensteuer werden immer mit Freibetrag berechnet.</li>
+        <li>Vorsorgeaufwendungen: Rentenbeiträge voll, Kranken- (Basisanteil) und Pflegeversicherung voll abziehbar.</li>
+        <li>Minijob: pauschal vom Arbeitgeber versteuert, zählt nicht zum Einkommen in der Steuererklärung.</li>
+        <li>Abfindung: Fünftelregelung (§ 34 EStG) inklusive Progressionsvorbehalt.</li>
+      </ul>
+      <div class="callout warn" style="margin-top:12px">Das ist eine Schätzung zur Planung und keine Steuerberatung. Für die Entscheidung über Steuerklassen und Abfindung die Zahlen mit Lohnsteuerhilfeverein, Steuerberatung oder der Agentur für Arbeit gegenprüfen.</div>
+    </div>
+  </div>
+</section>
+</main>
+<footer class="wrap">Stand der Rechengrößen: 2026. Eingaben werden nur lokal in diesem Browser gespeichert.</footer>
+
+<script>
+(function(){
+"use strict";
+const YEARS=[2027,2028,2029,2030,2031,2032];
+const COMBOS={
+  'V/III': {d:5,c:3,f:false,l:'Daniel V · Claudia III'},
+  'III/V': {d:3,c:5,f:false,l:'Daniel III · Claudia V'},
+  'IV/IV': {d:4,c:4,f:false,l:'Daniel IV · Claudia IV'},
+  'IV/IV-F':{d:4,c:4,f:true,l:'IV / IV mit Faktor'}
+};
+const ROMAN={1:'I',2:'II',3:'III',4:'IV',5:'V',6:'VI'};
+const W1=14071,W2=34939,W3=222260;
+
+/* ---------- Eingabefelder ---------- */
+const f=(id,l,v,u,x)=>Object.assign({id,l,v,u},x||{});
+const chk=(id,l,v,x)=>Object.assign({id,l,v,t:'chk'},x||{});
+const mon=(id,l,v,x)=>Object.assign({id,l,v,t:'month'},x||{});
+const FIELDS={
+ 'f-daniel':[
+  f('salary','Bruttogehalt',85000,'€/Jahr'),
+  f('carAllow','Car Allowance',1200,'€/Jahr'),
+  f('provPct','Provision',25,'% v. Gehalt'),
+  f('provAch','davon erwartet',100,'%',{h:'Zielerreichung'}),
+  f('shares','Aktienpaket',4800,'€/Jahr',{h:'Wert bei Zuteilung, wird als Lohn versteuert'}),
+  f('growth','Gehaltssteigerung',2,'%/Jahr'),
+  f('kvD','Krankenversicherung','GKV','',{t:'sel',opts:[['GKV','gesetzlich'],['PKV','privat']]}),
+  f('pkvPrem','PKV-Beitrag (nur bei privat)',650,'€/Monat'),
+  f('pkvBasic','PKV Basisanteil',85,'%'),
+  chk('provOn','Provision einrechnen'),
+  chk('sharesFB','Freibetrag Mitarbeiterbeteiligung 2.000 € nutzen (nur wenn das Programm allen Beschäftigten offensteht)',false)
+ ],
+ 'f-claudia':[
+  f('grossC','Bruttogehalt Lufthansa',4000,'€/Monat'),
+  mon('jobEnd','Letzter Arbeitsmonat','2027-06'),
+  f('sonderC','Sonderzahlung im letzten Jahr',0,'€',{h:'z. B. anteiliges Urlaubsgeld'}),
+  f('algDur','Arbeitslosengeld-Dauer',24,'Monate'),
+  f('algPct','Leistungssatz',67,'%',{h:'67 % mit Kind, sonst 60 %'}),
+  f('mjOld','Minijob jetzt',603,'€/Monat'),
+  f('mjNew','Minijob nach dem ALG',603,'€/Monat'),
+  chk('mjOldOn','Minijob läuft bis zum Jobende und fällt dann weg',true),
+  chk('mjNewOn','Nach dem Arbeitslosengeld wieder ein Minijob',true),
+  chk('mjRV','Minijob rentenversicherungspflichtig (3,6 % Eigenanteil)',true)
+ ],
+ 'f-kinder':[
+  f('kgRate','Kindergeld je Kind',259,'€/Monat'),
+  f('kfb','Kinderfreibetrag + BEA je Kind',9756,'€/Jahr'),
+  mon('noahStart','Noah: Kindergeld ab','2027-01'),
+  mon('noahEnd','Noah: Kindergeld bis','2028-07',{h:'Ende der Ausbildung'}),
+  mon('davidStart','David: Kindergeld ab','2027-01'),
+  mon('davidEnd','David: Kindergeld bis','2030-12',{h:'Monat mit 25 bzw. Studienende'})
+ ],
+ 'f-kirche':[
+  f('kistRate','Kirchensteuersatz',9,'%',{h:'8 % in Bayern und Baden-Württemberg'}),
+  chk('kistOn','Kirchensteuerpflichtig',false)
+ ],
+ 'f-wk1':[
+  f('hoDays','Homeoffice-Tage',150,'Tage',{h:'max. 210 Tage'}),
+  f('commDays','Bürotage',70,'Tage'),
+  f('km','Entfernung Wohnung–Büro',30,'km einfach'),
+  chk('ownCar','Fahrten mit eigenem Pkw (kein 4.500-€-Deckel)',true)
+ ],
+ 'f-wk2':[
+  f('dienstKm','Dienstfahrten eigener Pkw',0,'km',{h:'× 0,30 €'}),
+  f('hotel','Übernachtungskosten',0,'€/Jahr'),
+  f('flug','Flugkosten',0,'€/Jahr'),
+  f('vma8','Tage über 8 Std. / An- & Abreise',0,'Tage',{h:'× 14 €'}),
+  f('vma24','Volle Reisetage (24 Std.)',0,'Tage',{h:'× 28 €'}),
+  f('reiseNeben','Reisenebenkosten',0,'€/Jahr',{h:'Parken, Taxi, Bahn'}),
+  f('agErstatt','Steuerfreie Erstattung Arbeitgeber',0,'€/Jahr',{h:'wird abgezogen'})
+ ],
+ 'f-wk3':[
+  f('arbeitsmittel','Arbeitsmittel',300,'€/Jahr',{h:'Laptop, Büromöbel, Fachliteratur'}),
+  f('fortbildung','Fortbildung',0,'€/Jahr'),
+  f('telefon','Telefon/Internet',240,'€/Jahr',{h:'pauschal max. 240 €'}),
+  f('konto','Kontoführung',16,'€/Jahr',{h:'Pauschale 16 €'}),
+  f('verband','Gewerkschaft/Verband',0,'€/Jahr'),
+  f('sonstWK','Sonstige',0,'€/Jahr')
+ ],
+ 'f-wkc':[
+  f('kmC','Entfernung zur Homebase',25,'km einfach'),
+  f('daysC','Fahrtage im Jahr (bei Vollzeit)',110,'Tage',{h:'wird aufs Arbeitsende gekürzt'}),
+  f('otherWkC','Sonstige Werbungskosten',0,'€/Jahr')
+ ],
+ 'f-sa':[
+  f('spenden','Spenden',0,'€/Jahr'),
+  f('hhnah','Haushaltsnahe Dienstleistungen',0,'€/Jahr',{h:'Reinigung, Garten, Winterdienst'}),
+  f('handw','Handwerker (nur Arbeitslohn)',0,'€/Jahr')
+ ],
+ 'f-hh':[
+  f('sparrate','Sparrate',300,'€/Monat'),
+  chk('refundSpread','Steuererstattung des Vorjahres auf 12 Monate umlegen',false)
+ ],
+ 'f-auto1':[
+  f('carPrice','Kaufpreis',40000,'€'),
+  f('carDown','Anzahlung',8000,'€'),
+  f('carMonths','Laufzeit',60,'Monate'),
+  f('carRate','Effektivzins',5.9,'% p. a.'),
+  f('carBalloon','Schlussrate',0,'€',{h:'0 = klassischer Ratenkredit'}),
+  mon('carStart','Erste Rate','2027-03'),
+  chk('carOn','Auto im Haushalt und in der Prognose berücksichtigen',true),
+  chk('carDownSav','Anzahlung und Schlussrate aus dem Ersparten',true)
+ ],
+ 'f-auto2':[
+  f('carIns','Versicherung',900,'€/Jahr'),
+  f('carTax','Kfz-Steuer',150,'€/Jahr'),
+  f('carTyres','Reifen',250,'€/Jahr'),
+  f('carRep','Reparaturen',400,'€/Jahr'),
+  f('carInsp','Inspektion',350,'€/Jahr',{h:'einmal im Jahr'}),
+  f('carFuel','Sprit/Strom',180,'€/Monat')
+ ],
+ 'f-haus':[
+  f('hRest','Restschuld',90000,'€'),
+  f('hRate','Monatsrate',500,'€/Monat'),
+  f('hZins','Sollzins',2.0,'% p. a.',{h:'aus dem Darlehensvertrag'}),
+  mon('hStart','Restschuld-Stand','2026-12'),
+  f('hSonderJahr','Sondertilgung jährlich (Dez.)',0,'€/Jahr'),
+  f('hSonder','Einmalige Sondertilgung',0,'€'),
+  mon('hSonderM','im Monat','2027-12'),
+  f('hAbfPct','Anteil Abfindung in die Tilgung',0,'%',{h:'der Netto-Abfindung'}),
+  chk('hInclZins','Rate enthält die Zinsen (Annuität)',true)
+ ],
+ 'f-abf':[
+  f('abfBase','Monatsbrutto',4000,'€'),
+  f('abfYears','Betriebsjahre',34,'Jahre'),
+  f('abfF1','Faktor niedrig',0.5,'× Monat'),
+  f('abfF2','Faktor mittel',1.0,'× Monat'),
+  f('abfF3','Faktor hoch',1.5,'× Monat'),
+  f('abfYear','Auszahlungsjahr',2027,'',{t:'sel',opts:YEARS.map(y=>[String(y),String(y)])}),
+  f('abfSel','In Prognose & Steuer einrechnen','0','',{t:'sel',opts:[['0','keine'],['1','niedrig'],['2','mittel'],['3','hoch']]})
+ ],
+ 'f-spar':[
+  f('spStart','Schon gespart',0,'€'),
+  f('spZins','Rendite',3,'% p. a.'),
+  chk('spRefund','Erstattungen und Nachzahlungen laufen übers Sparkonto',true),
+  chk('spAbf','Netto-Abfindung wird angelegt (abzüglich Haus-Sondertilgung)',true),
+  chk('spSurplus','Überschuss am Jahresende aufs Sparkonto (Fehlbetrag wird entnommen)',true)
+ ],
+ 'f-param':[
+  f('bbgKV','Beitragsbemessungsgrenze KV/PV',69750,'€/Jahr'),
+  f('bbgRV','Beitragsbemessungsgrenze RV/AV',101400,'€/Jahr'),
+  f('zus','Zusatzbeitrag Krankenkasse',2.9,'%'),
+  f('pvAN','Pflegeversicherung Arbeitnehmer',1.55,'%',{h:'1,8 % minus 0,25 % für das 2. Kind unter 25'})
+ ]
+};
+const DEF_BUDGET=[
+ ['Strom',120],['Heizung / Gas',150],['Wasser, Abwasser, Müll',60],['Grundsteuer & Gebäudeversicherung',60],
+ ['Lebensmittel & Drogerie',900],['Versicherungen (Haftpflicht, Hausrat, BU …)',150],['Handy, Internet, TV',90],
+ ['Rundfunkbeitrag',18.36],['Abos & Streaming',30],['Kleidung',150],['Kinder (Taschengeld, Ausbildung, Studium)',300],
+ ['Freizeit & Urlaubsrücklage',300],['Sonstiges',150]
+];
+const DEF_COMBOS={2027:'V/III',2028:'V/III',2029:'V/III',2030:'III/V',2031:'III/V',2032:'III/V'};
+const KEY='steuerplaner-dc-v1';
+
+let S={}, budget=[], combos={...DEF_COMBOS}, cmpYear=2027;
+const allFields=[].concat(...Object.values(FIELDS));
+function defaults(){S={};allFields.forEach(x=>S[x.id]=x.v===undefined?true:x.v);budget=DEF_BUDGET.map(([n,a])=>({n,a}));combos={...DEF_COMBOS};cmpYear=2027;}
+defaults();
+try{const raw=localStorage.getItem(KEY);if(raw){const d=JSON.parse(raw);Object.assign(S,d.S||{});if(Array.isArray(d.budget))budget=d.budget;if(d.combos)combos={...DEF_COMBOS,...d.combos};if(d.cmpYear)cmpYear=d.cmpYear;}}catch(e){}
+function save(){try{localStorage.setItem(KEY,JSON.stringify({S,budget,combos,cmpYear}));}catch(e){}}
+
+function renderFields(){
+ for(const [cid,list] of Object.entries(FIELDS)){
+  const el=document.getElementById(cid);if(!el)continue;
+  el.innerHTML=list.map(x=>{
+   if(x.t==='chk') return `<div class="fld chk"><input type="checkbox" id="${x.id}" ${S[x.id]?'checked':''}><label for="${x.id}">${x.l}</label></div>`;
+   let inp;
+   if(x.t==='sel') inp=`<select id="${x.id}">${x.opts.map(o=>`<option value="${o[0]}" ${String(S[x.id])===o[0]?'selected':''}>${o[1]}</option>`).join('')}</select>`;
+   else if(x.t==='month') inp=`<input type="month" id="${x.id}" value="${S[x.id]}" placeholder="JJJJ-MM">`;
+   else inp=`<input type="number" inputmode="decimal" id="${x.id}" value="${S[x.id]}" step="any">`;
+   return `<div class="fld"><label for="${x.id}">${x.l}</label><div class="in">${inp}${x.u?`<span class="u">${x.u}</span>`:''}</div>${x.h?`<span class="h">${x.h}</span>`:''}</div>`;
+  }).join('');
+ }
+}
+function readField(x){
+ const el=document.getElementById(x.id);if(!el)return;
+ if(x.t==='chk') S[x.id]=el.checked;
+ else if(x.t==='sel') S[x.id]=el.value;
+ else if(x.t==='month'){ if(/^\d{4}-\d{2}$/.test(el.value)) S[x.id]=el.value; }
+ else { const v=parseFloat(String(el.value).replace(',','.')); S[x.id]=isFinite(v)?v:0; }
+}
+
+/* ---------- Helfer ---------- */
+const ym=s=>{const [y,m]=String(s).split('-').map(Number);return y*12+(m-1);};
+const ymStr=i=>{const y=Math.floor(i/12),m=i%12+1;return (m<10?'0':'')+m+'/'+y;};
+const MONTHS=['Jan','Feb','Mär','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Dez'];
+const ymLong=i=>MONTHS[i%12]+' '+Math.floor(i/12);
+const eur=(n,d)=>(isFinite(n)?n:0).toLocaleString('de-DE',{maximumFractionDigits:d||0,minimumFractionDigits:d||0})+' €';
+const sgn=n=>(n>0?'+':n<0?'−':'')+eur(Math.abs(n));
+const cls=n=>n>0.5?'pos':n<-0.5?'neg':'';
+const monthsIn=(a,b,Y)=>{const s=Math.max(ym(a),Y*12),e=Math.min(ym(b),Y*12+11);return Math.max(0,e-s+1);};
+
+/* ---------- Steuer-Kern ---------- */
+function est(x){x=Math.floor(x);if(x<=12348)return 0;
+ if(x<=17799){const y=(x-12348)/1e4;return Math.floor((914.51*y+1400)*y);}
+ if(x<=69878){const z=(x-17799)/1e4;return Math.floor((173.10*z+2397)*z+1034.87);}
+ if(x<=277825)return Math.floor(0.42*x-11135.63);
+ return Math.floor(0.45*x-19470.38);}
+function estSplit(z,prog){z=Math.max(0,z);if(z<=0)return 0;const b=z+(prog||0);const t=2*est(b/2);return prog?Math.floor(z*t/b):t;}
+function up56(zx){return Math.floor(Math.max((est(zx*1.25)-est(zx*0.75))*2,zx*0.14));}
+function mst56(x){
+ if(x>W2){let st=up56(W2);if(x>W3){st+=(W3-W2)*0.42;return Math.floor(st+(x-W3)*0.45);}return Math.floor(st+(x-W2)*0.42);}
+ let st=up56(x);if(x>W1){st=Math.floor(Math.min(st,up56(W1)+(x-W1)*0.42));}return st;}
+function lstZve(w,c,pkvV){if(w<=0)return 0;const rvB=Math.min(w,S.bbgRV),kvB=Math.min(w,S.bbgKV);
+ const v=rvB*(0.093+0.013)+(pkvV!=null?pkvV:kvB*(0.07+S.zus/200+S.pvAN/100));
+ const wk=c===6?0:Math.min(1230,w),sa=c===6?0:36;return Math.max(0,Math.floor(w-wk-sa-v-(c===2?4260:0)));}
+function lstTab(x,c){if(x<=0)return 0;if(c===3)return 2*est(x/2);if(c===5||c===6)return mst56(x);return est(x);}
+function lst(w,c,pkvV){return w<=0?0:lstTab(lstZve(w,c,pkvV),c);}
+function soliLSt(t,c){const fg=c===3?40700:20350;return t<=fg?0:Math.min(t*0.055,(t-fg)*0.119);}
+function sv(g,m,pkv){if(m<=0||g<=0)return{rv:0,av:0,kv:0,pv:0,t:0};const kvB=Math.min(g,S.bbgKV/12*m),rvB=Math.min(g,S.bbgRV/12*m);
+ const r={rv:rvB*0.093,av:rvB*0.013,kv:pkv?0:kvB*(0.073+S.zus/200),pv:pkv?0:kvB*S.pvAN/100};r.t=r.rv+r.av+r.kv+r.pv;return r;}
+function algFor(c){const be=Math.min(S.grossC*12,S.bbgRV);const t=lst(be,c);const so=soliLSt(t,c);return Math.max(0,(be/365*0.8-(t+so)/365)*S.algPct/100*30);}
+function algYear(){return Math.floor((ym(S.jobEnd)+1)/12);}
+function comboOf(cmb,Y){return COMBOS[cmb[Y]]||COMBOS['IV/IV'];}
+function algMonthly(Y,cmb){const aY=algYear();const cS=comboOf(cmb,Math.max(aY,YEARS[0])).c;const base=algFor(cS);if(Y<=aY)return base;return Math.min(base,algFor(comboOf(cmb,Y).c));}
+function abfAmount(k){k=+k;if(!k)return 0;return S.abfBase*S.abfYears*S['abfF'+k];}
+
+function wkDaniel(){
+ const ho=Math.min(Math.max(0,S.hoDays),210)*6;
+ const entRaw=S.commDays*S.km*0.38; const ent=S.ownCar?entRaw:Math.min(entRaw,4500);
+ const reise=Math.max(0,S.dienstKm*0.30+S.hotel+S.flug+S.vma8*14+S.vma24*28+S.reiseNeben-S.agErstatt);
+ const sonst=S.arbeitsmittel+S.fortbildung+S.telefon+S.konto+S.verband+S.sonstWK;
+ return{ho,ent,entRaw,reise,sonst,total:ho+ent+reise+sonst};
+}
+
+function assess(z0,kfb,alg,A,kg,red,kr,noF){
+ const tax=z=>{z=Math.max(0,z);const base=estSplit(z,alg);let add=0;if(A>0)add=noF?estSplit(z+A,alg)-base:5*(estSplit(z+A/5,alg)-base);return base+add;};
+ const tA=tax(z0),tB=tax(z0-kfb);const useFB=(tA-tB)>kg;
+ const tarif=Math.max(0,(useFB?tB:tA)-red);const estDue=tarif+(useFB?kg:0);
+ const sb=Math.max(0,tB-red);const soli=sb<=40700?0:Math.min(sb*0.055,(sb-40700)*0.119);const kist=sb*kr;
+ const satz=z0>0?(useFB?tB:tA)/Math.max(1,useFB?z0-kfb:z0):0;
+ return{tA,tB,useFB,tarif,estDue,soli,kist,total:estDue+soli+kist,satz};
+}
+
+function yearCalc(Y,cmb,o){
+ o=o||{};const cb=comboOf(cmb,Y);
+ const g=Math.pow(1+S.growth/100,Y-2027);
+ const sal=S.salary*g,allow=S.carAllow,prov=S.provOn?sal*S.provPct/100*S.provAch/100:0;
+ const shTax=Math.max(0,S.shares-(S.sharesFB?2000:0));
+ const cashD=sal+allow+prov,wageD=cashD+shTax,wageReg=sal+allow;
+ const pkv=S.kvD==='PKV';let pkvNet=0,pkvV=null,pkvDed=0;
+ if(pkv){const prem=S.pkvPrem*12;const zmax=S.bbgKV*(0.073+S.zus/200+0.018);const z=Math.min(prem/2,zmax);pkvNet=prem-z;pkvV=Math.max(0,prem*S.pkvBasic/100-z);pkvDed=pkvV;}
+ const svD=sv(wageD,12,pkv),svReg=sv(wageReg,12,pkv);
+ const je=ym(S.jobEnd),aS=je+1,aE=je+S.algDur;
+ let empM=0,algM=0,mjAmt=0,mjOldM=0,mjNewM=0;
+ for(let m=0;m<12;m++){const i=Y*12+m;const emp=i<=je;if(emp)empM++;if(i>=aS&&i<=aE)algM++;
+  if(emp&&S.mjOldOn){mjAmt+=S.mjOld;mjOldM++;}else if(i>aE&&S.mjNewOn){mjAmt+=S.mjNew;mjNewM++;}}
+ const sonder=(Math.floor(je/12)===Y&&empM>0)?S.sonderC:0;
+ const wageC=empM*S.grossC+sonder;const svC=sv(wageC,empM,false);
+ let fac=1;
+ if(cb.f){const zD=lstZve(wageD,4,pkvV),zC=lstZve(wageC,4,null);const sIV=est(zD)+est(zC);const X=2*est((zD+zC)/2);fac=sIV>0?Math.min(1,Math.floor(X/sIV*1000)/1000):1;}
+ const lstD=lst(wageD,cb.d,pkvV)*fac,soliD=soliLSt(lstD,cb.d);
+ const lstReg=lst(wageReg,cb.d,pkvV)*fac,soliReg=soliLSt(lstReg,cb.d);
+ const lstCann=lst(S.grossC*12,cb.c)*fac,lstCm=lstCann/12,soliCm=soliLSt(lstCann,cb.c)/12;
+ const lstS=sonder?(lst(S.grossC*12+sonder,cb.c)-lst(S.grossC*12,cb.c))*fac:0;
+ const soliS=sonder?soliLSt(lstCann+lstS,cb.c)-soliLSt(lstCann,cb.c):0;
+ const lstC=empM?lstCm*empM+lstS:0,soliC=empM?soliCm*empM+soliS:0;
+ const A=o.abf!=null?o.abf:((+S.abfSel>0&&Y===+S.abfYear)?abfAmount(S.abfSel):0);
+ const lstCw=lst(wageC,cb.c);
+ const lstA=A?lst(wageC+A,cb.c)-lstCw:0,soliA=A?soliLSt(lstCw+lstA,cb.c)-soliLSt(lstCw,cb.c):0;
+ const kr=S.kistOn?S.kistRate/100:0;
+ const kistD=lstD*kr,kistReg=lstReg*kr,kistCm=lstCm*kr,kistC=lstC*kr,kistA=lstA*kr;
+ const withheld=lstD+soliD+kistD+lstC+soliC+kistC+lstA+soliA+kistA;
+ const algMon=algM?algMonthly(Y,cmb):0,alg=algMon*algM;
+ const mjNet=mjAmt*(S.mjRV?0.964:1),mjRVb=mjAmt*(S.mjRV?0.036:0);
+ const kidM=[monthsIn(S.noahStart,S.noahEnd,Y),monthsIn(S.davidStart,S.davidEnd,Y)];
+ const kg=(kidM[0]+kidM[1])*S.kgRate,kfb=(kidM[0]+kidM[1])*S.kfb/12;
+ const wD=wkDaniel();const wkD=Math.max(1230,wD.total);
+ const wCraw=(S.daysC*S.kmC*0.38+S.otherWkC)*empM/12;const wkC=wageC>0?Math.min(wageC,Math.max(1230,wCraw)):0;
+ const vors=svD.rv+svC.rv+0.96*(svD.kv+svC.kv)+svD.pv+svC.pv+pkvDed+mjRVb;
+ const sa=Math.max(72,kistD+kistC+kistA+S.spenden);
+ const einkD=wageD-wkD,einkC=wageC-wkC;
+ const zvE0=Math.max(0,Math.floor(einkD+einkC-vors-sa));
+ const red=Math.min(4000,0.2*S.hhnah)+Math.min(1200,0.2*S.handw);
+ const a=assess(zvE0,kfb,alg,A,kg,red,kr,o.noF);
+ const refund=withheld-a.total;
+ const netD=cashD-svD.t-pkvNet-lstD-soliD-kistD;
+ const netDregM=(wageReg-svReg.t-pkvNet-lstReg-soliReg-kistReg)/12;
+ const svCm=sv(S.grossC,1,false).t;const netCm=S.grossC-svCm-lstCm-soliCm-kistCm;
+ const netC=wageC-svC.t-lstC-soliC-kistC;
+ const abfNet=A-lstA-soliA-kistA;
+ return{Y,cb,fac,sal,allow,prov,shares:S.shares,shTax,cashD,wageD,svD,pkvNet,lstD,soliD,kistD,netD,netDregM,
+  empM,wageC,svC,lstC,soliC,kistC,netC,netCm,lstCm,algM,algMon,alg,mjAmt,mjNet,mjOldM,mjNewM,kidM,kg,kfb,
+  wkD,wD,wkC,vors,sa,einkD,einkC,zvE0,red,a,A,lstA,soliA,kistA,abfNet,withheld,refund,
+  cashIn:netD+netC+alg+mjNet+kg+abfNet};
+}
+
+/* ---------- Auto, Haus, Sparen ---------- */
+function carCalc(){
+ const L=Math.max(0,S.carPrice-S.carDown),n=Math.max(1,Math.round(S.carMonths)),i=S.carRate/1200,B=Math.min(S.carBalloon,L);
+ const rate=i===0?(L-B)/n:(L-B/Math.pow(1+i,n))*i/(1-Math.pow(1+i,-n));
+ const run=(S.carIns+S.carTax+S.carTyres+S.carRep+S.carInsp)/12+S.carFuel;
+ const interest=rate*n+B-L;const start=ym(S.carStart);
+ const bal=[];let b=L;for(let k=0;k<=n;k++){bal.push(b);b=b*(1+i)-rate;}
+ return{L,n,i,B,rate,run,interest,start,end:start+n-1,bal,total:rate*n+B+S.carDown};
+}
+function carMonth(idx,C){if(!S.carOn||idx<C.start)return{rate:0,run:0,once:0};
+ const inLoan=idx<=C.end;let once=0;if(S.carDownSav){if(idx===C.start)once+=S.carDown;if(idx===C.end)once+=C.B;}
+ return{rate:inLoan?C.rate:0,run:C.run,once};}
+function houseSched(withSonder,abfNetForHouse,abfIdx){
+ const z=S.hZins/1200;let b=S.hRest;const st=ym(S.hStart);const out=[];let totI=0,k=0;
+ while(b>0.005&&k<720){const idx=st+1+k;const it=b*z;let pay=S.hInclZins?S.hRate:S.hRate+it;let tilg=pay-it;
+  if(tilg<=0&&!withSonder){return{never:true,out,totI};}
+  let sonder=0;if(withSonder){if(idx%12===11)sonder+=S.hSonderJahr;if(idx===ym(S.hSonderM))sonder+=S.hSonder;if(abfIdx!=null&&idx===abfIdx)sonder+=abfNetForHouse;}
+  if(tilg+sonder>=b){const last=b+it;sonder=Math.max(0,b-tilg);pay=Math.min(pay,last);tilg=b;b=0;}
+  else{b-=tilg+sonder;}
+  if(b<0)b=0;totI+=it;out.push({idx,bal:b,pay,it,sonder});k++;}
+ return{never:b>0.005,out,totI,end:out.length?out[out.length-1].idx:st};
+}
+
+/* ---------- Gesamtrechnung ---------- */
+let R={},C=null,H0=null,H1=null,abfInfo=null;
+function computeAll(){
+ R={};YEARS.forEach(Y=>R[Y]=yearCalc(Y,combos));
+ C=carCalc();
+ const aY=+S.abfYear;const abfNet=R[aY]?R[aY].abfNet:0;
+ const abfIdx=Math.max(ym(S.jobEnd),aY*12)+1;
+ abfInfo={net:abfNet,idx:abfIdx,house:abfNet*S.hAbfPct/100};
+ H0=houseSched(false);H1=houseSched(true,abfInfo.house,abfInfo.house>0?abfIdx:null);
+}
+function houseMonth(idx){const e=H1.out.find(r=>r.idx===idx);return e?{pay:e.pay,sonder:e.sonder}:{pay:0,sonder:0};}
+function budgetSum(){return budget.reduce((s,b)=>s+(+b.a||0),0);}
+function monthCash(idx){
+ const Y=Math.floor(idx/12);const r=R[Y]||yearCalc(Y,combos);const je=ym(S.jobEnd),aE=je+S.algDur;
+ const emp=idx<=je,alg=idx>je&&idx<=aE;
+ const kids=(idx>=ym(S.noahStart)&&idx<=ym(S.noahEnd)?1:0)+(idx>=ym(S.davidStart)&&idx<=ym(S.davidEnd)?1:0);
+ const mj=(emp&&S.mjOldOn)?S.mjOld:(!emp&&!alg&&S.mjNewOn)?S.mjNew:0;
+ const prev=R[Y-1];
+ const inc={d:r.netDregM,c:emp?r.netCm:0,alg:alg?algMonthly(Y,combos):0,mj:mj*(S.mjRV?0.964:1),kg:kids*S.kgRate,ref:(S.refundSpread&&prev)?prev.refund/12:0};
+ inc.t=inc.d+inc.c+inc.alg+inc.mj+inc.kg+inc.ref;
+ const cm=carMonth(idx,C);const hm=houseMonth(idx);
+ const out={hh:budgetSum(),haus:hm.pay,auto:cm.rate+cm.run,spar:S.sparrate};out.t=out.hh+out.haus+out.auto+out.spar;
+ return{idx,Y,emp,alg,kids,inc,out,rest:inc.t-out.t,combo:r.cb};
+}
+
+/* ---------- Rendering ---------- */
+const $=id=>document.getElementById(id);
+function rowsTable(rows){return rows.map(r=>{if(r.grp)return`<tr class="grp"><td colspan="2">${r.grp}</td></tr>`;return`<tr class="${r.sum?'sum':''}"><td>${r.l}${r.h?`<div class="note" style="margin:0">${r.h}</div>`:''}</td><td class="n ${r.c||''}">${r.v}</td></tr>`;}).join('');}
+
+function renderKPIs(){
+ const Y=cmpYear,r=R[Y];const je=ym(S.jobEnd);
+ const mAlg=monthCash(je+1);
+ const k=[
+  {l:'Steuerklassen '+Y,v:r.cb.l,s:'in der Prognose gewählt',raw:true},
+  {l:(r.refund>=0?'Erstattung ':'Nachzahlung ')+Y,v:sgn(r.refund),c:cls(r.refund),s:'Bescheid kommt '+(Y+1)},
+  {l:'Netto im ALG-Monat',v:eur(mAlg.inc.t),s:ymLong(je+1)+', inkl. Kindergeld'},
+  {l:'Rest im ALG-Monat',v:sgn(mAlg.rest),c:cls(mAlg.rest),s:'nach Haushalt, Haus, Auto, Sparen'}
+ ];
+ $('kpis').innerHTML=k.map(x=>`<div class="kpi"><div class="l">${x.l}</div><div class="v ${x.c||''}" ${x.raw?'style="font-family:var(--f-display);font-size:1.15rem;font-weight:600"':''}>${x.v}</div><div class="s">${x.s}</div></div>`).join('');
+}
+
+function renderCompare(){
+ const sel=$('cmpYear');sel.innerHTML=YEARS.map(y=>`<option value="${y}" ${y===cmpYear?'selected':''}>${y}</option>`).join('');
+ const Y=cmpYear;const aY=algYear();
+ const rows=Object.entries(COMBOS).map(([key,cb])=>{
+  const c2={...combos,[Y]:key};
+  if(Y===aY){for(const yy of YEARS){if(yy>Y&&yy<=Math.floor((ym(S.jobEnd)+S.algDur)/12))c2[yy]=key;}}
+  const r=yearCalc(Y,c2);
+  const algTot=Y===aY?algMonthly(aY,c2)*S.algDur:null;
+  const total=r.cashIn+r.refund;
+  const whole=algTot!=null?total-r.alg+algTot:total;
+  return{key,cb,r,total,algTot,whole};
+ });
+ const best=rows.reduce((a,b)=>b.whole>a.whole?b:a);
+ const showAlg=Y===aY;
+ $('cmpIntro').innerHTML=`Bei Zusammenveranlagung ist die Jahressteuer fast gleich (kleine Unterschiede nur durch das Arbeitslosengeld im Progressionsvorbehalt). Die Steuerklasse verschiebt nur, wie viel monatlich einbehalten wird, und damit Erstattung oder Nachzahlung. Wirklich Geld macht sie beim <b>Arbeitslosengeld</b> aus, weil das nach Claudias Steuerklasse berechnet wird.`;
+ const h=`<thead><tr><th>Kombination</th><th class="n">Daniel netto/Monat</th><th class="n">Claudia netto/Monat</th><th class="n">ALG/Monat</th><th class="n">Lohnsteuer einbehalten</th><th class="n">Steuer laut Bescheid</th><th class="n">Erstattung / Nachzahlung</th><th class="n">Haushalt ${Y} gesamt</th>${showAlg?'<th class="n">inkl. gesamter ALG-Bezug</th>':''}</tr></thead>`;
+ const b=rows.map(x=>{const isSel=combos[Y]===x.key;return`<tr class="${x===best?'best':''}"><td><b>${x.cb.l}</b>${x.cb.f?` <span class="note">Faktor ${x.r.fac.toFixed(3).replace('.',',')}</span>`:''}${isSel?' <span class="pill acc">gewählt</span>':''}${x===best?' <span class="pill pos">am meisten Geld</span>':''}</td>
+  <td class="n">${eur(x.r.netDregM)}</td><td class="n">${x.r.empM?eur(x.r.netCm):'–'}</td><td class="n">${x.r.algM||showAlg?eur(x.r.algMon||algMonthly(Y,{...combos,[Y]:x.key})):'–'}</td>
+  <td class="n">${eur(x.r.withheld)}</td><td class="n">${eur(x.r.a.total)}</td><td class="n ${cls(x.r.refund)}">${sgn(x.r.refund)}</td><td class="n">${eur(x.total)}</td>${showAlg?`<td class="n"><b>${eur(x.whole)}</b></td>`:''}</tr>`;}).join('');
+ $('cmpTable').innerHTML=h+'<tbody>'+b+'</tbody>';
+ const worst=rows.reduce((a,b)=>b.whole<a.whole?b:a);
+ const selRow=rows.find(x=>x.key===combos[Y]);
+ let v=`<div class="callout"><b>${best.cb.l}</b> bringt ${Y} ${showAlg?'über den gesamten ALG-Bezug ':''}${eur(best.whole-worst.whole)} mehr als die ungünstigste Variante (${worst.cb.l}).`;
+ if(selRow&&selRow!==best)v+=` Gewählt ist ${selRow.cb.l}: ${eur(best.whole-selRow.whole)} weniger.`;
+ v+=`</div>`;
+ if(showAlg){const bAlg=rows.find(x=>x.key==='V/III'),iv=rows.find(x=>x.key==='IV/IV'),iii=rows.find(x=>x.key==='III/V');
+  v+=`<p class="note">Arbeitslosengeld pro Monat: Claudia III ${eur(algMonthly(aY,{...combos,[aY]:'V/III'}))}, IV ${eur(algMonthly(aY,{...combos,[aY]:'IV/IV'}))}, V ${eur(algMonthly(aY,{...combos,[aY]:'III/V'}))}. Über ${S.algDur} Monate sind das zwischen ${eur(iii.algTot)} und ${eur(bAlg.algTot)}.</p>`;}
+ $('cmpVerdict').innerHTML=v;
+}
+
+function renderDetail(){
+ const Y=cmpYear,r=R[Y];$('detYearLbl').textContent=Y+' · '+r.cb.l;
+ const a=r.a;
+ const rows=[
+  {grp:'Einkünfte'},
+  {l:'Daniel Arbeitslohn',h:`Gehalt ${eur(r.sal)}, Car Allowance ${eur(r.allow)}, Provision ${eur(r.prov)}, Aktien ${eur(r.shTax)}`,v:eur(r.wageD)},
+  {l:'− Werbungskosten Daniel',h:r.wD.total>1230?'tatsächliche Kosten':'Pauschbetrag',v:'−'+eur(r.wkD)},
+  {l:'Claudia Arbeitslohn',h:`${r.empM} Monate bei Lufthansa`,v:eur(r.wageC)},
+  {l:'− Werbungskosten Claudia',v:'−'+eur(r.wkC)},
+  {l:'− Vorsorgeaufwendungen',h:'Renten-, Kranken-, Pflegeversicherung',v:'−'+eur(r.vors)},
+  {l:'− Sonderausgaben',v:'−'+eur(r.sa)},
+  {l:'Zu versteuerndes Einkommen',v:eur(r.zvE0),sum:true},
+  {grp:'Steuer'},
+  {l:'Arbeitslosengeld (steuerfrei, Progressionsvorbehalt)',v:eur(r.alg)},
+  ...(r.A?[{l:'Abfindung (Fünftelregelung)',v:eur(r.A)}]:[]),
+  {l:'Kinderfreibeträge',h:a.useFB?'günstiger als Kindergeld, Kindergeld wird verrechnet':'Kindergeld ist günstiger',v:a.useFB?'−'+eur(r.kfb):'nicht genutzt'},
+  {l:'Einkommensteuer (tariflich)',h:'Durchschnittssatz '+(a.satz*100).toFixed(1).replace('.',',')+' %',v:eur(a.tarif)},
+  ...(r.red?[{l:'Steuerermäßigung haushaltsnah/Handwerker',v:'−'+eur(r.red)}]:[]),
+  ...(a.useFB?[{l:'+ verrechnetes Kindergeld',v:eur(r.kg)}]:[]),
+  {l:'Solidaritätszuschlag',v:eur(a.soli)},
+  ...(S.kistOn?[{l:'Kirchensteuer',v:eur(a.kist)}]:[]),
+  {l:'Steuer laut Bescheid',v:eur(a.total),sum:true},
+  {grp:'Abgerechnet'},
+  {l:'Einbehalten bei Daniel',h:'Lohnsteuer, Soli'+(S.kistOn?', KiSt':''),v:eur(r.lstD+r.soliD+r.kistD)},
+  {l:'Einbehalten bei Claudia',v:eur(r.lstC+r.soliC+r.kistC)},
+  ...(r.A?[{l:'Einbehalten auf Abfindung',v:eur(r.lstA+r.soliA+r.kistA)}]:[]),
+  {l:r.refund>=0?'Erstattung':'Nachzahlung',v:sgn(r.refund),c:cls(r.refund),sum:true}
+ ];
+ $('detTable').innerHTML=rowsTable(rows);
+ const je=ym(S.jobEnd);const hints=[];
+ const noHtml=[];
+ if(Y===algYear()) hints.push(`<div class="callout"><b>Steuerklasse für Claudia rechtzeitig festlegen.</b> Für das Arbeitslosengeld zählt die Steuerklasse, die am 1. Januar ${algYear()} eingetragen ist. Ein Wechsel wird ab dem Folgemonat des Antrags wirksam, der Antrag beim Finanzamt (ELSTER „Antrag auf Steuerklassenwechsel“) muss also im Dezember ${algYear()-1} gestellt sein.</div>`);
+ hints.push(`<div class="callout warn" style="margin-top:10px"><b>Während des Arbeitslosengelds nicht zurückwechseln.</b> Wechselt Claudia später in Klasse V, berechnet die Agentur das Arbeitslosengeld ab dann niedriger. Erst nach dem letzten ALG-Monat (${ymLong(je+S.algDur)}) lohnt sich Daniel III / Claudia V.</div>`);
+ hints.push(`<ul class="hints"><li>Bei III/V und bei Arbeitslosengeld über 410 € im Jahr seid ihr zur Steuererklärung verpflichtet (Frist mit Lohnsteuerhilfe bzw. Steuerberatung länger).</li><li>Mit Daniel in Klasse V ist sein Monatsnetto deutlich niedriger; das Geld kommt als Erstattung im Folgejahr zurück. Im Reiter Haushalt kann die Erstattung auf 12 Monate umgelegt werden.</li><li>Alternativ: einen Teil der Erstattung schon im laufenden Jahr über einen Freibetrag auf Daniels Lohnsteuerkarte holen (Lohnsteuer-Ermäßigungsantrag).</li></ul>`);
+ $('taxHints').innerHTML=hints.join('');
+}
+
+function renderIncome(){
+ const rows=[{grp:'Daniel'}];
+ YEARS.slice(0,4).forEach(Y=>{const r=R[Y];rows.push({l:`${Y} · Klasse ${ROMAN[r.cb.d]}${r.cb.f?' mit Faktor':''}`,h:`Provision & Aktien netto im Jahr: ${eur(r.netD-r.netDregM*12)} (davon Aktien ${eur(r.shares)} als Depotwert)`,v:eur(r.netDregM)});});
+ rows.push({grp:'Claudia'});
+ const r0=R[YEARS[0]];
+ rows.push({l:`Lufthansa netto bis ${ymLong(ym(S.jobEnd))}`,h:'Klasse '+ROMAN[r0.cb.c],v:eur(r0.netCm)});
+ rows.push({l:'Minijob netto',v:eur(S.mjOld*(S.mjRV?0.964:1))});
+ const aY=algYear();rows.push({l:`Arbeitslosengeld ab ${ymLong(ym(S.jobEnd)+1)}`,h:`${S.algDur} Monate, bis ${ymLong(ym(S.jobEnd)+S.algDur)}`,v:eur(algMonthly(aY,combos))});
+ rows.push({grp:'Kindergeld'});
+ rows.push({l:'Noah',h:`${ymLong(ym(S.noahStart))} bis ${ymLong(ym(S.noahEnd))}`,v:eur(S.kgRate)});
+ rows.push({l:'David',h:`${ymLong(ym(S.davidStart))} bis ${ymLong(ym(S.davidEnd))}`,v:eur(S.kgRate)});
+ $('incomeTable').innerHTML=rowsTable(rows);
+}
+
+function renderWK(){
+ const w=wkDaniel();const r=R[cmpYear];
+ const rows=[
+  {grp:'Daniel'},
+  {l:'Homeoffice-Pauschale',h:`${Math.min(S.hoDays,210)} Tage × 6 €`,v:eur(w.ho)},
+  {l:'Entfernungspauschale',h:`${S.commDays} Tage × ${S.km} km × 0,38 €${!S.ownCar&&w.entRaw>4500?' (auf 4.500 € gedeckelt)':''}`,v:eur(w.ent)},
+  {l:'Dienstreisen',v:eur(w.reise)},
+  {l:'Weitere Werbungskosten',v:eur(w.sonst)},
+  {l:'Summe Werbungskosten',v:eur(w.total),sum:true},
+  {l:'über dem Pauschbetrag von 1.230 €',v:eur(Math.max(0,w.total-1230)),c:w.total>1230?'pos':''},
+  {grp:'Claudia ('+cmpYear+')'},
+  {l:'Werbungskosten angesetzt',h:r.wkC<=1230?'Pauschbetrag (gilt nur bis zur Höhe des Lohns)':'tatsächliche Kosten',v:eur(r.wkC)},
+  {grp:'Wirkung '+cmpYear},
+  {l:'Steuerersparnis durch Werbungskosten über der Pauschale',h:'grob: Mehrbetrag × Grenzsteuersatz',v:'≈ '+eur(Math.max(0,w.total-1230)*marginal(cmpYear)),c:'pos'},
+  {l:'Steuerermäßigung haushaltsnah & Handwerker',v:eur(r.red)}
+ ];
+ $('wkTable').innerHTML=rowsTable(rows);
+ const warn=[];
+ if(S.hoDays+S.commDays>230)warn.push('Homeoffice- und Bürotage zusammen über 230: Das Finanzamt fragt bei mehr Arbeitstagen nach (Urlaub, Feiertage, Krankheit abziehen).');
+ if(S.hoDays>210)warn.push('Homeoffice-Pauschale gibt es höchstens für 210 Tage.');
+ $('wkWarn').innerHTML=warn.map(x=>`<div class="callout warn" style="margin-top:10px">${x}</div>`).join('');
+}
+function marginal(Y){const r=R[Y];const t1=assess(r.zvE0,r.kfb,r.alg,r.A,r.kg,r.red,0).total;const t2=assess(r.zvE0-1000,r.kfb,r.alg,r.A,r.kg,r.red,0).total;return Math.max(0,(t1-t2)/1000);}
+
+function renderBudget(){
+ const el=$('budget');
+ const C0=C;const je=ym(S.jobEnd);const mAlg=monthCash(je+1);
+ el.innerHTML=budget.map((b,i)=>`<div class="brow"><input aria-label="Bezeichnung" id="bn${i}" data-i="${i}" data-k="n" value="${String(b.n).replace(/"/g,'&quot;')}"><input class="amt" aria-label="Betrag pro Monat" id="ba${i}" type="number" step="any" data-i="${i}" data-k="a" value="${b.a}"><button class="x" type="button" data-del="${i}" aria-label="Position löschen">×</button></div>`).join('')+
+ `<div class="brow lock"><span>Haus (Monatsrate, siehe Reiter Haus)</span><span class="n">${eur(S.hRate)}</span><span></span></div>`+
+ `<div class="brow lock"><span>Auto (Rate + laufende Kosten)${S.carOn?'':' – ausgeschaltet'}</span><span class="n">${eur(S.carOn?C0.rate+C0.run:0)}</span><span></span></div>`+
+ `<div class="brow lock"><span>Sparrate</span><span class="n">${eur(S.sparrate)}</span><span></span></div>`+
+ `<div class="brow lock" style="color:var(--ink);font-weight:600;border-top:2px solid var(--ink);margin-top:4px;padding-top:6px"><span>Summe im ALG-Monat</span><span class="n">${eur(mAlg.out.t)}</span><span></span></div>`;
+}
+function renderPhases(){
+ const je=ym(S.jobEnd),aE=je+S.algDur;
+ const ph=[{t:'Claudia arbeitet',idx:Math.max(je,YEARS[0]*12)},{t:'Arbeitslosengeld',idx:je+1},{t:'Nach dem ALG',idx:aE+1}];
+ $('phases').innerHTML=ph.map(p=>{const m=monthCash(p.idx);const i=m.inc,o=m.out;
+  const lines=[['Daniel netto (Kl. '+ROMAN[m.combo.d]+')',i.d],...(i.c?[['Claudia netto (Kl. '+ROMAN[m.combo.c]+')',i.c]]:[]),...(i.alg?[['Arbeitslosengeld',i.alg]]:[]),...(i.mj?[['Minijob',i.mj]]:[]),['Kindergeld ('+m.kids+' Kind'+(m.kids===1?'':'er')+')',i.kg],...(i.ref?[['Erstattung Vorjahr ÷ 12',i.ref]]:[])];
+  const ol=[['Haushalt',o.hh],['Haus',o.haus],['Auto',o.auto],['Sparen',o.spar]];
+  const pct=Math.min(100,i.t>0?o.t/i.t*100:100);
+  return`<div class="ph"><div class="t">${p.t}</div><div class="d">Beispielmonat ${ymLong(p.idx)}</div><dl>${lines.map(l=>`<dt>${l[0]}</dt><dd>${eur(l[1])}</dd>`).join('')}<dt class="b">Verfügbar</dt><dd class="b">${eur(i.t)}</dd>${ol.map(l=>`<dt>− ${l[0]}</dt><dd>${eur(l[1])}</dd>`).join('')}<dt class="b">Bleibt übrig</dt><dd class="b ${cls(m.rest)}">${sgn(m.rest)}</dd></dl>
+  <div class="bar" role="img" aria-label="${Math.round(pct)} Prozent des Nettos verplant"><i style="width:${pct}%;background:${m.rest<0?'var(--neg)':'var(--accent)'}"></i></div><div class="d" style="margin-top:3px">${Math.round(o.t/i.t*100)} % des Nettos verplant${m.rest<0?' – mehr als verfügbar':''}</div></div>`;}).join('');
+ const mAlg=monthCash(je+1);const tot=mAlg.inc.t;
+ const items=[...budget.map(b=>[b.n,+b.a||0]),['Haus',mAlg.out.haus],['Auto',mAlg.out.auto],['Sparen',mAlg.out.spar]].filter(x=>x[1]>0).sort((a,b)=>b[1]-a[1]);
+ $('budgetBars').innerHTML=items.map(x=>`<div style="margin:6px 0"><div class="row" style="justify-content:space-between;font-size:.84rem"><span>${x[0]}</span><span class="num">${eur(x[1])} · ${(x[1]/tot*100).toFixed(0)} %</span></div><div class="bar" style="height:6px;margin-top:2px"><i style="width:${Math.min(100,x[1]/tot*100)}%;background:var(--accent)"></i></div></div>`).join('')+
+ `<p class="note">Bezogen auf ${eur(tot)} verfügbares Netto im ${ymLong(je+1)}.</p>`;
+}
+
+function lineChart(el,series,opts){
+ const W=640,Hh=220,pl=58,pr=12,pt=12,pb=26;
+ const all=series.flatMap(s=>s.pts);if(!all.length){el.innerHTML='';return;}
+ const xs=all.map(p=>p[0]),ys=all.map(p=>p[1]);
+ const x0=Math.min(...xs),x1=Math.max(...xs)||x0+1,y1=Math.max(1,...ys)*1.05,y0=Math.min(0,...ys);
+ const X=x=>pl+(x-x0)/((x1-x0)||1)*(W-pl-pr),Yv=y=>pt+(1-(y-y0)/((y1-y0)||1))*(Hh-pt-pb);
+ const step=niceStep((y1-y0)/4);let grid='';
+ for(let v=Math.ceil(y0/step)*step;v<=y1;v+=step){grid+=`<line x1="${pl}" x2="${W-pr}" y1="${Yv(v)}" y2="${Yv(v)}" stroke="var(--line)" stroke-width="1"/><text x="${pl-6}" y="${Yv(v)+4}" text-anchor="end">${(v/1000).toLocaleString('de-DE')} T€</text>`;}
+ let xt='';const yrs=new Set();for(let i=Math.ceil(x0/12)*12;i<=x1;i+=12)yrs.add(i);
+ const yl=[...yrs];const every=Math.ceil(yl.length/8);
+ yl.forEach((i,k)=>{if(k%every)return;xt+=`<text x="${X(i)}" y="${Hh-8}" text-anchor="middle">${opts&&opts.yearLabel?opts.yearLabel(i):Math.floor(i/12)}</text>`;});
+ const paths=series.map(s=>{const d=s.pts.map((p,k)=>(k?'L':'M')+X(p[0]).toFixed(1)+' '+Yv(p[1]).toFixed(1)).join(' ');
+  const area=s.fill?`<path d="${d} L${X(s.pts[s.pts.length-1][0]).toFixed(1)} ${Yv(0)} L${X(s.pts[0][0]).toFixed(1)} ${Yv(0)} Z" fill="${s.color}" fill-opacity=".12" stroke="none"/>`:'';
+  const last=s.pts[s.pts.length-1];
+  return area+`<path d="${d}" fill="none" stroke="${s.color}" stroke-width="${s.w||2}" ${s.dash?'stroke-dasharray="5 4"':''}/>`+(s.dot?`<circle cx="${X(last[0])}" cy="${Yv(last[1])}" r="3.5" fill="${s.color}"/>`:'');}).join('');
+ el.innerHTML=`<svg viewBox="0 0 ${W} ${Hh}" role="img" aria-label="${opts&&opts.label||'Diagramm'}">${grid}${xt}${paths}</svg>`;
+}
+function niceStep(r){const p=Math.pow(10,Math.floor(Math.log10(r||1)));const n=r/p;return (n<=1?1:n<=2?2:n<=5?5:10)*p;}
+
+function renderAuto(){
+ const c=C;const rows=[
+  {l:'Kreditbetrag',h:`Kaufpreis ${eur(S.carPrice)} − Anzahlung ${eur(S.carDown)}`,v:eur(c.L)},
+  {l:'Monatsrate',h:`${c.n} Monate, ${String(S.carRate).replace('.',',')} % effektiv`,v:eur(c.rate,2)},
+  ...(c.B?[{l:'Schlussrate',h:ymLong(c.end),v:eur(c.B)}]:[]),
+  {l:'Zinsen über die Laufzeit',v:eur(c.interest),c:'neg'},
+  {l:'Laufende Kosten pro Monat',h:'Versicherung, Steuer, Reifen, Reparaturen, Inspektion, Sprit',v:eur(c.run)},
+  {l:'Auto gesamt pro Monat',v:eur(c.rate+c.run),sum:true},
+  {l:'Letzte Rate',v:ymLong(c.end)},
+  {l:'Gesamtkosten Kauf',h:'Anzahlung + alle Raten + Schlussrate',v:eur(c.total)},
+  {l:'Car Allowance netto (grob)',h:'1.200 € brutto abzüglich Grenzsteuer und Abgaben',v:eur(S.carAllow*(1-marginal(cmpYear))/12)+' /Monat'}
+ ];
+ $('autoTable').innerHTML=rowsTable(rows);
+ lineChart($('autoChart'),[{pts:c.bal.map((b,k)=>[c.start+k,Math.max(0,b)]),color:'var(--accent)',fill:true,dot:true}],{label:'Restschuld Autokredit'});
+}
+
+function renderHaus(){
+ const h0=H0,h1=H1;const st=ym(S.hStart);
+ let html='';
+ if(h0.never&&h1.never){html=`<div class="callout neg">Mit ${eur(S.hRate)} Rate und ${String(S.hZins).replace('.',',')} % Zins wird nichts getilgt: Die Zinsen sind höher als die Rate.</div>`;}
+ else{
+  const e1=h1.end,e0=h0.never?null:h0.end;const months=e1-st;
+  html=`<div class="kpis" style="margin-top:0"><div class="kpi"><div class="l">Schuldenfrei</div><div class="v">${ymLong(e1)}</div><div class="s">in ${Math.floor(months/12)} Jahren, ${months%12} Monaten</div></div>
+  <div class="kpi"><div class="l">Zinsen bis dahin</div><div class="v">${eur(h1.totI)}</div><div class="s">bei ${String(S.hZins).replace('.',',')} % Sollzins</div></div></div>`;
+  const z0=S.hRest*S.hZins/1200;
+  html+=`<p class="note">Im ersten Monat gehen ${eur(z0)} in Zinsen und ${eur(S.hInclZins?S.hRate-z0:S.hRate)} in die Tilgung.</p>`;
+  if(e0&&e0!==e1)html+=`<div class="callout" style="margin-top:8px">Durch Sondertilgungen ${abfInfo.house>0?`(davon ${eur(abfInfo.house)} aus der Abfindung) `:''}ist das Haus <b>${Math.floor((e0-e1)/12)} Jahre und ${(e0-e1)%12} Monate früher</b> abbezahlt und ihr spart ${eur(h0.totI-h1.totI)} Zinsen. Ohne Sondertilgung: ${ymLong(e0)}.</div>`;
+  else if(+S.abfSel>0&&!S.hAbfPct)html+=`<p class="note">Tipp: Unter „Anteil Abfindung in die Tilgung“ seht ihr, wie viel früher das Haus mit einem Teil der Abfindung frei wäre.</p>`;
+  else if(!+S.abfSel)html+=`<p class="note">Für eine Sondertilgung aus der Abfindung im Reiter Abfindung eine Größe für die Prognose auswählen.</p>`;
+ }
+ $('hausResult').innerHTML=html;
+ const sp=[];if(!h0.never)sp.push({pts:[[st,S.hRest],...h0.out.map(r=>[r.idx,r.bal])],color:'var(--muted)',w:1.5,dash:true});
+ if(!h1.never)sp.push({pts:[[st,S.hRest],...h1.out.map(r=>[r.idx,r.bal])],color:'var(--accent)',fill:true,dot:true});
+ lineChart($('hausChart'),sp,{label:'Restschuld Haus'});
+}
+
+function renderAbf(){
+ const Y=+S.abfYear;const r0=yearCalc(Y,combos,{abf:0});
+ const rows=[1,2,3].map(k=>{const A=abfAmount(k);const r=yearCalc(Y,combos,{abf:A});const rn=yearCalc(Y,combos,{abf:A,noF:true});
+  const tax=r.a.total-r0.a.total,taxN=rn.a.total-r0.a.total;const wh=r.lstA+r.soliA+r.kistA;
+  return{k,A,tax,taxN,wh,net:A-tax,back:wh-tax};});
+ const names={1:'niedrig',2:'mittel',3:'hoch'};
+ $('abfTable').innerHTML=`<thead><tr><th>Größe</th><th class="n">Brutto</th><th class="n">Lohnsteuer bei Auszahlung</th><th class="n">ausgezahlt</th><th class="n">Steuer laut Bescheid</th><th class="n">kommt zurück</th><th class="n">netto endgültig</th></tr></thead><tbody>`+
+ rows.map(x=>`<tr class="${+S.abfSel===x.k?'best':''}"><td><b>${names[x.k]}</b><div class="note" style="margin:0">${String(S['abfF'+x.k]).replace('.',',')} × ${eur(S.abfBase)} × ${S.abfYears}</div></td><td class="n">${eur(x.A)}</td><td class="n">${eur(x.wh)}</td><td class="n">${eur(x.A-x.wh)}</td><td class="n">${eur(x.tax)}</td><td class="n pos">${sgn(x.back)}</td><td class="n"><b>${eur(x.net)}</b><div class="note" style="margin:0">${(x.net/x.A*100).toFixed(0)} % vom Brutto</div></td></tr>`).join('')+'</tbody>';
+ const m=rows[1];
+ $('abfNote').innerHTML=`<p class="note">Steuer berechnet als Mehrsteuer im gemeinsamen Bescheid ${Y} (Steuerklassen ${R[Y]?R[Y].cb.l:''}, mit Arbeitslosengeld im Progressionsvorbehalt). Die Fünftelregelung spart bei der mittleren Abfindung ${eur(m.taxN-m.tax)} gegenüber normaler Besteuerung. Die Lohnsteuer bei Auszahlung hängt von Claudias Steuerklasse ab; was zu viel ist, kommt mit dem Bescheid ${Y+1} zurück.</p>`;
+}
+
+function renderProg(){
+ const yrs=YEARS;const rows=[];
+ const C0=C;
+ const per=Y=>{const r=R[Y];let haus=0,auto=0,once=0;for(let m=0;m<12;m++){const i=Y*12+m;haus+=houseMonth(i).pay;const cm=carMonth(i,C0);auto+=cm.rate+cm.run;once+=cm.once;}
+  const prevRef=(R[Y-1]&&!S.spRefund)?R[Y-1].refund:0;
+  const inc=r.netD+r.netC+r.alg+r.mjNet+r.kg+((S.spAbf&&+S.abfSel>0)?0:r.abfNet)+prevRef;
+  const out=budgetSum()*12+haus+auto+S.sparrate*12;
+  const hb=(()=>{const e=H1.out.filter(x=>x.idx<=Y*12+11);return e.length?e[e.length-1].bal:S.hRest;})();
+  return{r,haus,auto,once,prevRef,inc,out,rest:inc-out,hb};};
+ const P={};yrs.forEach(Y=>P[Y]=per(Y));
+ let sav=S.spStart;const savEnd={};
+ const refundIdx=Y=>(Y+1)*12+5;
+ for(let i=yrs[0]*12;i<=yrs[yrs.length-1]*12+11;i++){
+  sav*=1+S.spZins/1200;sav+=S.sparrate;
+  const Y=Math.floor(i/12);
+  if(S.spRefund){const prevY=Y-1;if(R[prevY]&&i===refundIdx(prevY))sav+=R[prevY].refund;}
+  if(S.spAbf&&abfInfo.net>0&&+S.abfSel>0&&i===abfInfo.idx-1)sav+=abfInfo.net-abfInfo.house;
+  const cm=carMonth(i,C0);sav-=cm.once;
+  if(i%12===11){if(S.spSurplus&&P[Y])sav+=P[Y].rest;savEnd[Y]=sav;}
+ }
+ const sel=Y=>`<select id="cmb${Y}" data-y="${Y}" aria-label="Steuerklassen ${Y}">${Object.entries(COMBOS).map(([k,c])=>`<option value="${k}" ${combos[Y]===k?'selected':''}>${k==='IV/IV-F'?'IV/IV F':k} </option>`).join('')}</select>`;
+ const line=(l,fn,o)=>`<tr${o&&o.sum?' class="sum"':''}><td>${l}</td>${yrs.map(Y=>{const v=fn(Y);return`<td class="n ${o&&o.c?cls(v):''}">${typeof v==='string'?v:(o&&o.sg?sgn(v):eur(v))}</td>`;}).join('')}</tr>`;
+ let h=`<thead><tr><th></th>${yrs.map(Y=>`<th class="n">${Y}</th>`).join('')}</tr></thead><tbody>`;
+ h+=`<tr><td>Steuerklassen<div class="note" style="margin:0">Daniel / Claudia</div></td>${yrs.map(Y=>`<td class="n">${sel(Y)}</td>`).join('')}</tr>`;
+ h+=`<tr class="grp"><td colspan="${yrs.length+1}">Einnahmen netto</td></tr>`;
+ h+=line('Daniel brutto',Y=>P[Y].r.wageD+(P[Y].r.shares-P[Y].r.shTax));
+ h+=line('Daniel netto',Y=>P[Y].r.netD);
+ h+=line('Claudia Lohn netto',Y=>P[Y].r.netC);
+ h+=line('Arbeitslosengeld',Y=>P[Y].r.alg);
+ h+=line('Minijob',Y=>P[Y].r.mjNet);
+ h+=line('Kindergeld',Y=>P[Y].r.kg);
+ if(+S.abfSel>0)h+=line('Abfindung ausgezahlt'+(S.spAbf?' (→ Sparen)':''),Y=>P[Y].r.abfNet);
+ if(!S.spRefund)h+=line('Erstattung aus Vorjahr',Y=>P[Y].prevRef,{sg:true,c:true});
+ h+=`<tr class="grp"><td colspan="${yrs.length+1}">Steuerbescheid</td></tr>`;
+ h+=line('Erstattung / Nachzahlung für dieses Jahr',Y=>P[Y].r.refund,{sg:true,c:true});
+ h+=`<tr class="grp"><td colspan="${yrs.length+1}">Ausgaben</td></tr>`;
+ h+=line('Haushalt',Y=>budgetSum()*12);
+ h+=line('Haus',Y=>P[Y].haus);
+ h+=line('Auto',Y=>P[Y].auto);
+ h+=line('Sparrate',Y=>S.sparrate*12);
+ h+=line('Überschuss / Fehlbetrag',Y=>P[Y].rest,{sg:true,c:true,sum:true});
+ h+=`<tr class="grp"><td colspan="${yrs.length+1}">Stand Jahresende</td></tr>`;
+ h+=line('Restschuld Haus',Y=>P[Y].hb);
+ h+=line('Sparvermögen',Y=>savEnd[Y]);
+ h+=line('Kinder mit Kindergeld',Y=>{const k=P[Y].r.kidM;return(k[0]?'Noah ':'')+(k[1]?'David':'')||'–';});
+ $('progTable').innerHTML=h+'</tbody>';
+ lineChart($('sparChart'),[{pts:[[yrs[0]*12-1,S.spStart],...yrs.map(Y=>[Y*12+11,savEnd[Y]])],color:'var(--pos)',fill:true,dot:true}],{label:'Sparvermögen',yearLabel:i=>Math.floor(i/12)});
+ const neg=yrs.filter(Y=>P[Y].rest<0);
+ $('sparNote').innerHTML=`<p class="note">Ende ${yrs[yrs.length-1]}: <b>${eur(savEnd[yrs[yrs.length-1]])}</b>. Sparrate ${eur(S.sparrate)} im Monat${S.spSurplus?' plus Jahresüberschuss':''}, ${String(S.spZins).replace('.',',')} % Rendite${S.spRefund?', Erstattungen jeweils im Juni des Folgejahres':''}${S.carOn&&S.carDownSav?', Auto-Anzahlung abgezogen':''}.</p>`+
+ (neg.length?`<div class="callout neg" style="margin-top:8px">In ${neg.join(', ')} reichen die Einnahmen nicht für Haushalt, Haus, Auto und Sparrate. Dort Sparrate senken oder Kosten anpassen.</div>`:'');
+}
+
+function renderAll(){computeAll();renderKPIs();renderCompare();renderDetail();renderIncome();renderWK();renderBudget();renderPhases();renderAuto();renderHaus();renderAbf();renderProg();}
+
+/* ---------- Events ---------- */
+document.addEventListener('input',e=>{
+ const t=e.target;
+ if(t.dataset&&t.dataset.k){const i=+t.dataset.i;if(t.dataset.k==='n')budget[i].n=t.value;else budget[i].a=parseFloat(String(t.value).replace(',','.'))||0;save();computeAll();renderKPIs();renderPhases();renderProg();updateBudgetSum();return;}
+ const x=allFields.find(q=>q.id===t.id);if(x){readField(x);save();renderAll();}
+});
+document.addEventListener('change',e=>{
+ const t=e.target;
+ if(t.dataset&&t.dataset.y){combos[+t.dataset.y]=t.value;save();renderAll();return;}
+ if(t.id==='cmpYear'){cmpYear=+t.value;save();renderAll();return;}
+ const x=allFields.find(q=>q.id===t.id);if(x&&(x.t==='chk'||x.t==='sel'||x.t==='month')){readField(x);save();renderAll();}
+});
+function updateBudgetSum(){const je=ym(S.jobEnd);const rows=document.querySelectorAll('#budget .brow.lock .n');const m=monthCash(je+1);if(rows.length)rows[rows.length-1].textContent=eur(m.out.t);const bb=$('budgetBars');if(bb){/* refresh bars */const tmp=document.createElement('div');}}
+document.addEventListener('click',e=>{
+ const t=e.target;
+ if(t.dataset&&t.dataset.del!=null){budget.splice(+t.dataset.del,1);save();renderAll();return;}
+ if(t.id==='addItem'){budget.push({n:'Neue Position',a:0});save();renderAll();const el=$('bn'+(budget.length-1));if(el){el.focus();el.select();}return;}
+ if(t.id==='resetBtn'){if(t.dataset.arm){defaults();try{localStorage.removeItem(KEY);}catch(_){}renderFields();renderAll();t.textContent='Alle Eingaben zurücksetzen';delete t.dataset.arm;$('resetMsg').textContent='Zurückgesetzt.';}
+  else{t.dataset.arm='1';t.textContent='Wirklich zurücksetzen?';$('resetMsg').textContent='Noch einmal klicken zum Bestätigen.';}}
+});
+
+/* ---------- Reiter ---------- */
+const TABS=['steuer','einkommen','absetzen','haushalt','auto','haus','abfindung','prognose','annahmen'];
+function route(){const h=(location.hash||'').replace('#','');const cur=TABS.includes(h)?h:'steuer';
+ TABS.forEach(t=>{$('p-'+t).classList.toggle('on',t===cur);});
+ document.querySelectorAll('#tabnav a').forEach(a=>{if(a.getAttribute('href')==='#'+cur)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current');});}
+window.addEventListener('hashchange',()=>{route();window.scrollTo({top:Math.min(window.scrollY,document.querySelector('nav.tabs').offsetTop)});});
+
+renderFields();renderAll();route();
+window.__calc={yearCalc,R:()=>R,combos:()=>combos,algFor,lst,est};
+})();
+</script>
